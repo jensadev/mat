@@ -40,7 +40,7 @@ describe('api/users', () => {
     });
 
     it('should return 404 error when valid object id is passed but does not exist', async () => {
-      const res = await request(app).get('/api/users/21');
+      const res = await request(app).get('/api/users/213534534');
       expect(res.status).to.equal(404);
     });
   });
