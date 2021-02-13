@@ -9,8 +9,8 @@ router
 router
   .route('/:id')
   .get(controller.show)
-  // .post(controller.update)
-  // .delete(controller.destroy);
+  .put(controller.update)
+  .delete(controller.destroy);
 // router
 //   .route('/:id/edit')
 //   .get(controller.edit);

@@ -61,4 +61,43 @@ describe('api/meals', () => {
 
     // add more tests to validate request body accordingly eg, make sure name is more than 3 characters etc
   });
+
+  describe("PUT /:id", () => {
+    it("should update the existing meal and return 200", async () => {
+      const meal = new Meal({ name: 'Broccolisoppa', type: 3, date: new Date().toISOString().split('T')[0] });
+      await meal.save();
+
+      const res = await request(app)
+        .put("/api/meals/" + meal.id)
+        .send({
+          name: "Hamburgare",
+          type: 3,
+          date: new Date().toISOString().split('T')[0]
+        });
+
+      expect(res.status).to.equal(200);
+      expect(res.body).to.have.property("name", "Hamburgare");
+    });
+  });
+
+  describe("DELETE /:id", () => {
+    it("should delete requested id and return response 200", async () => {
+      const meal = new Meal({ name: 'Pannkakor', type: 1, date: new Date().toISOString().split('T')[0] });
+      await meal.save();
+
+      const res = await request(app).delete("/api/meals/" + meal.id);
+      expect(res.status).to.be.equal(200);
+    });
+
+    it("should return 404 when deleted meal is requested", async () => {
+      const meal = new Meal({ name: 'Pannkakor', type: 1, date: new Date().toISOString().split('T')[0] });
+      await meal.save();
+
+      let res = await request(app).delete("/api/meals/" + meal.id);
+      expect(res.status).to.be.equal(200);
+
+      res = await request(app).get("/api/meals/" + meal.id);
+      expect(res.status).to.be.equal(404);
+    });
+  });
 });

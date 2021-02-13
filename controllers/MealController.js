@@ -28,3 +28,7 @@ module.exports.store = async (req, res) => {
   await meal.save();
   return res.send(meal);
 };
+
+module.exports.update = async (req, res) => {};
+
+module.exports.destroy = async (req, res) => {};
