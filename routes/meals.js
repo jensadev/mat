@@ -5,7 +5,7 @@ const controller = require('../controllers/MealController');
 router
   .route('/')
   .get(controller.index)
-  // .post(controller.store);
+  .post(controller.store);
 router
   .route('/:id')
   .get(controller.show)

@@ -44,4 +44,21 @@ describe('api/meals', () => {
       expect(res.status).to.equal(404);
     });
   });
+
+  describe("POST /", () => {
+    it("should return a meal when the request body is valid", async () => {
+      const res = await request(app)
+        .post("/api/meals")
+        .send({
+          name: "Tacos",
+          type: "3",
+          date: new Date().toISOString().split('T')[0]
+        });
+      expect(res.status).to.equal(200);
+      expect(res.body).to.have.property("id");
+      expect(res.body).to.have.property("name", "Tacos");
+    });
+
+    // add more tests to validate request body accordingly eg, make sure name is more than 3 characters etc
+  });
 });

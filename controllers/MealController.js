@@ -18,3 +18,13 @@ module.exports.show = async (req, res) => {
   }
   return res.send(meal);
 };
+
+module.exports.store = async (req, res) => {
+  let meal = new Meal({
+    name: req.body.name,
+    type: req.body.type,
+    date: new Date().toISOString().split('T')[0]
+  });
+  await meal.save();
+  return res.send(meal);
+};
