@@ -11,13 +11,18 @@ class Meal {
     this.id = typeof obj.id === 'undefined' ? null : obj.id;
   }
 
-  async save() {
+  async save(obj = {}) {
     if (this.id) {
       try {
         const sql =
           'UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()) WHERE id = ?';
-        const result = await query(sql, [this.name, this.type, this.date, this.id]);
-        this.id = result.insertId;
+        const result = await query(sql, [
+          obj.name,
+          obj.type,
+          obj.date,
+          this.id
+        ]);
+        return result;
       } catch (e) {
         console.error(e);
       }
