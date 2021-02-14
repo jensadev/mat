@@ -19,8 +19,10 @@ class Meal {
       try {
         const sql = `UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()  WHERE id = ?`;
         const result = await query(sql, [this.name, this.type_id, this.date, this.id]);
+        return result.changedRows;
       } catch (e) {
         console.error(e);
+        return 0;
       }
     } else {
       try {
@@ -28,8 +30,10 @@ class Meal {
           `INSERT INTO meals (name, type_id, date, created_at, updated_at) VALUES ( ?, ?, ?, now(), now() )`;
         const result = await query(sql, [this.name, this.type_id, this.date]);
         this.id = result.insertId;
+        return result.affectedRows;
       } catch (e) {
         console.error(e);
+        return 0;
       }
     }
   }
@@ -64,11 +68,10 @@ class Meal {
       try {
         const sql = `DELETE FROM meals WHERE id = ?`;
         const result = await query(sql, id);
-        if (result.affectedRows == 1) {
-          return true;
-        }
+        return result.affectedRows;
       } catch (e) {
         console.error(e);
+        return 0;
       }
     } else {
       throw 'Error: Id fail';

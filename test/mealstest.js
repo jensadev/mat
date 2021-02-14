@@ -59,6 +59,13 @@ describe('api/meals', () => {
       expect(res.body).to.have.property('name', 'Tacos');
     });
 
+    it('should return 400 when request body is invalid', async () => {
+      const res = await request(app)
+        .post('/api/meals')
+        .send({ type_id: 'Glass' });
+      expect(res.status).to.equal(400);
+    });
+
     // add more tests to validate request body accordingly eg, make sure name is more than 3 characters etc
   });
 

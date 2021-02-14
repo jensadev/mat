@@ -25,7 +25,11 @@ module.exports.store = async (req, res) => {
     type_id: req.body.type_id,
     date: new Date().toISOString().split('T')[0]
   });
-  await meal.save();
+  const result = await meal.save();
+  if (result == 0) {
+    return res.status(400).send('Invalid request');
+  }
+
   return res.send(meal);
 };
 
@@ -35,12 +39,18 @@ module.exports.update = async (req, res) => {
   if (typeof meal === 'undefined') {
     return res.status(500).send('Error: Meal undefined');
   }
-  await meal.save(req.body);
+  const result = await meal.save(req.body);
+  if (result == 0) {
+    return res.status(400).send('Invalid request');
+  }
   return res.send(meal);
 };
 
 module.exports.destroy = async (req, res) => {
   let id = parseInt(req.params.id);
-  await Meal.delete(id);
+  const result = await Meal.delete(id);
+  if (result == 0) {
+    return res.status(400).send('Invalid request');
+  }
   return res.send('Meal deleted');
 };
