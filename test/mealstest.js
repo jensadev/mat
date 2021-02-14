@@ -62,7 +62,7 @@ describe('api/meals', () => {
     it('should return 400 when request body is invalid', async () => {
       const res = await request(app)
         .post('/api/meals')
-        .send({ type_id: 'Glass' });
+        .send({ name: '', type_id: 'Glass', date: '19821312' });
       expect(res.status).to.equal(400);
     });
 

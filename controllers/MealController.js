@@ -1,4 +1,5 @@
 const Meal = require('../models/Meal');
+const { body, validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
   let meals = await Meal.find();
@@ -6,11 +7,16 @@ module.exports.index = async (req, res) => {
 };
 
 module.exports.show = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   let id = parseInt(req.params.id);
   if (!Number.isInteger(id)) {
     return res.status(400).send('Invalid id type');
   }
-  
+
   let meal = await Meal.find(id);
 
   if (!meal) {
@@ -20,6 +26,11 @@ module.exports.show = async (req, res) => {
 };
 
 module.exports.store = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   let meal = new Meal({
     name: req.body.name,
     type_id: req.body.type_id,
@@ -34,6 +45,11 @@ module.exports.store = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
   let id = parseInt(req.params.id);
   let meal = await Meal.find(id);
   if (typeof meal === 'undefined') {
