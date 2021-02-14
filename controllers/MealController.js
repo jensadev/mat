@@ -22,7 +22,7 @@ module.exports.show = async (req, res) => {
 module.exports.store = async (req, res) => {
   let meal = new Meal({
     name: req.body.name,
-    type: req.body.type,
+    type_id: req.body.type_id,
     date: new Date().toISOString().split('T')[0]
   });
   await meal.save();
@@ -33,17 +33,10 @@ module.exports.update = async (req, res) => {
   let id = parseInt(req.params.id);
   let meal = await Meal.find(id);
   if (typeof meal === 'undefined') {
-    return res.status(500).send(err);
-  } else {
-    const result = meal.save(
-      {
-        name: req.body.name,
-        type: req.body.type,
-        date: req.body.date
-      }
-    );
-    return res.send(meal);
+    return res.status(500).send('Error: Meal undefined');
   }
+  await meal.save(req.body);
+  return res.send(meal);
 };
 
 module.exports.destroy = async (req, res) => {

@@ -12,8 +12,8 @@ describe('api/meals', () => {
   describe('GET /', () => {
     it('should return all meals', async () => {
 
-      const meal = new Meal({ name: 'Korv med bröd', type: 2, date: new Date().toISOString().split('T')[0] });
-      const meal2 =  new Meal({ name: 'Laxsoppa', type: 3, date: new Date().toISOString().split('T')[0] });
+      const meal = new Meal({ name: 'Korv med bröd', type_id: 2, date: new Date().toISOString().split('T')[0] });
+      const meal2 =  new Meal({ name: 'Laxsoppa', type_id: 3, date: new Date().toISOString().split('T')[0] });
 
       await meal.save();
       await meal2.save();
@@ -26,7 +26,7 @@ describe('api/meals', () => {
 
   describe('GET /:id', () => {
     it('should return a meal if valid id is passed', async () => {
-      const meal = new Meal({ name: 'Fiskpinnar med potatismos', type: 2, date: new Date().toISOString().split('T')[0] });
+      const meal = new Meal({ name: 'Fiskpinnar med potatismos', type_id: 2, date: new Date().toISOString().split('T')[0] });
       await meal.save();
 
       const res = await request(app).get('/api/meals/' + meal.id);
@@ -45,58 +45,58 @@ describe('api/meals', () => {
     });
   });
 
-  describe("POST /", () => {
-    it("should return a meal when the request body is valid", async () => {
+  describe('POST /', () => {
+    it('should return a meal when the request body is valid', async () => {
       const res = await request(app)
-        .post("/api/meals")
+        .post('/api/meals')
         .send({
-          name: "Tacos",
-          type: "3",
+          name: 'Tacos',
+          type_id: 3,
           date: new Date().toISOString().split('T')[0]
         });
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property("id");
-      expect(res.body).to.have.property("name", "Tacos");
+      expect(res.body).to.have.property('id');
+      expect(res.body).to.have.property('name', 'Tacos');
     });
 
     // add more tests to validate request body accordingly eg, make sure name is more than 3 characters etc
   });
 
-  describe("PUT /:id", () => {
-    it("should update the existing meal and return 200", async () => {
-      const meal = new Meal({ name: 'Broccolisoppa', type: 3, date: new Date().toISOString().split('T')[0] });
+  describe('PUT /:id', () => {
+    it('should update the existing meal and return 200', async () => {
+      const meal = new Meal({ name: 'Korv med bröd', type_id: 2, date: new Date().toISOString().split('T')[0] });
       await meal.save();
 
       const res = await request(app)
-        .put("/api/meals/" + meal.id)
+        .put('/api/meals/' + meal.id)
         .send({
-          name: "Hamburgare",
-          type: 3,
+          name: 'Hamburgare',
+          type_id: 3,
           date: new Date().toISOString().split('T')[0]
         });
 
       expect(res.status).to.equal(200);
-      expect(res.body).to.have.property("name", "Hamburgare");
+      expect(res.body).to.have.property('name', 'Hamburgare');
     });
   });
 
-  describe("DELETE /:id", () => {
-    it("should delete requested id and return response 200", async () => {
-      const meal = new Meal({ name: 'Pannkakor', type: 1, date: new Date().toISOString().split('T')[0] });
+  describe('DELETE /:id', () => {
+    it('should delete requested id and return response 200', async () => {
+      const meal = new Meal({ name: 'Pannkakor', type_id: 1, date: new Date().toISOString().split('T')[0] });
       await meal.save();
 
-      const res = await request(app).delete("/api/meals/" + meal.id);
+      const res = await request(app).delete('/api/meals/' + meal.id);
       expect(res.status).to.be.equal(200);
     });
 
-    it("should return 404 when deleted meal is requested", async () => {
-      const meal = new Meal({ name: 'Pannkakor', type: 1, date: new Date().toISOString().split('T')[0] });
+    it('should return 404 when deleted meal is requested', async () => {
+      const meal = new Meal({ name: 'Pannkakor', type_id: 1, date: new Date().toISOString().split('T')[0] });
       await meal.save();
 
-      let res = await request(app).delete("/api/meals/" + meal.id);
+      let res = await request(app).delete('/api/meals/' + meal.id);
       expect(res.status).to.be.equal(200);
 
-      res = await request(app).get("/api/meals/" + meal.id);
+      res = await request(app).get('/api/meals/' + meal.id);
       expect(res.status).to.be.equal(404);
     });
   });

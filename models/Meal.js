@@ -1,4 +1,4 @@
-const { query } = require('./Database');
+const { query, pool } = require('./Database');
 
 class Meal {
   constructor(obj) {
@@ -6,31 +6,27 @@ class Meal {
       throw 'Error: Undefined object';
     }
     this.name = obj.name;
-    this.type = obj.type;
+    this.type_id = obj.type_id;
     this.date = obj.date;
     this.id = typeof obj.id === 'undefined' ? null : obj.id;
   }
 
   async save(obj = {}) {
     if (this.id) {
+      this.name = obj.name;
+      this.type_id = obj.type_id;
+      this.date = obj.date;
       try {
-        const sql =
-          'UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()) WHERE id = ?';
-        const result = await query(sql, [
-          obj.name,
-          obj.type,
-          obj.date,
-          this.id
-        ]);
-        return result;
+        const sql = `UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()  WHERE id = ?`;
+        const result = await query(sql, [this.name, this.type_id, this.date, this.id]);
       } catch (e) {
         console.error(e);
       }
     } else {
       try {
         const sql =
-          'INSERT INTO meals (name, type_id, date, created_at, updated_at) VALUES (?, now(), now())';
-        const result = await query(sql, [this.name, this.type, this.date]);
+          `INSERT INTO meals (name, type_id, date, created_at, updated_at) VALUES ( ?, ?, ?, now(), now() )`;
+        const result = await query(sql, [this.name, this.type_id, this.date]);
         this.id = result.insertId;
       } catch (e) {
         console.error(e);
@@ -41,7 +37,7 @@ class Meal {
   static async find(id = null) {
     if (id) {
       try {
-        const sql = 'SELECT * FROM meals WHERE id = ? LIMIT 1';
+        const sql = `SELECT * FROM meals WHERE id = ? LIMIT 1`;
         const result = await query(sql, id);
         const meal = new Meal(result[0]);
         return meal;
@@ -50,7 +46,7 @@ class Meal {
       }
     } else {
       try {
-        const sql = 'SELECT * FROM meals ORDER BY date DESC';
+        const sql = `SELECT * FROM meals ORDER BY date DESC`;
         const result = await query(sql);
         const meals = [];
         result.forEach((element) => {
@@ -60,6 +56,22 @@ class Meal {
       } catch (e) {
         console.error(e);
       }
+    }
+  }
+
+  static async delete(id) {
+    if(id) {
+      try {
+        const sql = `DELETE FROM meals WHERE id = ?`;
+        const result = await query(sql, id);
+        if (result.affectedRows == 1) {
+          return true;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      throw 'Error: Id fail';
     }
   }
 }
