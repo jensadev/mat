@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <main>
+    <p id="msg"></p>
+    <button id="fetch">Get</button>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const instance = axios.create({
+      baseURL: 'http://localhost:3000',
+    });
+
+    const button = document.querySelector('#fetch');
+    const msg = document.querySelector('#msg');
+
+    button.addEventListener('click', (e) => {
+      // Make a request for a user with a given ID
+      instance.get('/api/meals/2')
+      .then(function (response) {
+        // handle success
+        console.log(response);
+
+        msg.textContent += JSON.stringify(response.data);
+
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
+      .then(function () {
+        // always executed
+      });
+    });
+
+
+  </script>
+</body>
+</html>
