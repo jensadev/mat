@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
     "test": "mocha -r dotenv/config --timeout 10000 --exit",
     "coverage": "nyc --reporter=html --reporter=text mocha -r dotenv/config --exit --timeout 10000"
   },
@@ -23,5 +24,10 @@
   "devDependencies": {
     "nodemon": "^2.0.7",
     "nyc": "^15.1.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jensnti/mat"
+  },
+  "license": "MIT"
 }
