@@ -1,4 +1,4 @@
-const { query, pool } = require('./Database');
+const { query, pool } = require('./db.model');
 
 class Meal {
   constructor(obj) {

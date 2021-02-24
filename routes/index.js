@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { query } = require('../models/Database');
+const { query } = require('../models/db.model');
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {

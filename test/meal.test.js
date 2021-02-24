@@ -1,8 +1,8 @@
-const Meal = require('../models/Meal');
+const Meal = require('../models/meal.model');
 const request = require('supertest');
 const expect = require('chai').expect;
 const app = require('../app');
-const { query } = require('../models/Database');
+const { query } = require('../models/db.model');
 
 describe('api/meals', () => {
   beforeEach(async () => {

@@ -6,7 +6,8 @@ const cors = require('cors')
 
 require('dotenv').config({path: './.env'});
 
-const mealRouter = require('./routes/meals');
+const mealRouter = require('./routes/meal.route');
+const authRouter = require('./routes/auth.route');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/meals', mealRouter);
+app.use('/api/auth', authRouter);
 
 app.use((req, res, next) => {
   next(createError(404));

@@ -1,4 +1,4 @@
-const Meal = require('../models/Meal');
+const Meal = require('../models/meal.model');
 const { body, validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
