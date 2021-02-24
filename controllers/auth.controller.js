@@ -11,8 +11,20 @@ module.exports.create = async (req, res) => {
 };
 
 module.exports.store = async (req, res) => {
-  // log in user
-  return res.json(req.body);
+  let user = await User.find('email', req.body.email);
+  if (!user) {
+    return res.status(404).json( { error: 'User not found' } );
+  } else {
+    bcrypt.compare(req.body.password, user.password, (err, match) => {
+      if (err) {
+        return res.status(500).json(err);
+      } else if (match) {
+        return res.status(200).json( { token: user.generateToken() } );
+      } else {
+        return res.status(403).json( { error: 'Passwords do not match.' } );
+      }
+    });
+  }
 };
 
 module.exports.destroy = async (req, res) => {

@@ -7,7 +7,10 @@ const { body, validationResult  } = require('express-validator');
 router
   .route('/login')
   .get(authcontroller.create)
-  .post(authcontroller.store);
+  .post(
+    body('email').isEmail(),
+    body('password').notEmpty(),
+    authcontroller.store);
 router
   .route('/register')
   .get(registercontroller.create)

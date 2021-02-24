@@ -17,9 +17,10 @@ module.exports.store = async (req, res) => {
   }
   bcrypt.hash(req.body.password, 10, async (err, hash) => {
     if (err) res.status(500).json(err);
-    const newUser = new User(req.body.email, hash);
+    const newUser = new User(null, req.body.email, hash);
     const result = await newUser.save();
     if (result > 0) {
+      newUser.generateToken();
       return res.send(newUser);  
     } else {
       return res.status(400).json({ errors: 'Invalid request' });

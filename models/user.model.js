@@ -1,11 +1,13 @@
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
 const { query } = require("./db.model");
 
 class User {
-  constructor(email, password, id) {
+  constructor(id, email, password) {
     this.email = email;
     this.password = password;
     this.id = typeof id === "undefined" ? null : id;
+    // console.table(this);
   }
 
   async save() {
@@ -24,12 +26,16 @@ class User {
     }
   }
 
-  static async find(userId = null) {
-    if (userId) {
+  generateToken() {
+    return jwt.sign({ data: this }, process.env.SECRET, { expiresIn: '24h' });
+  }
+
+  static async find(field, value) {
+    if (field) {
       try {
-        const sql = "SELECT * FROM users WHERE id = ?";
-        const result = await query(sql, userId);
-        const user = new User(...result[0]);
+        const sql = "SELECT * FROM users WHERE ?? = ?";
+        const result = await query(sql, [field, value]);
+        const user = new User(result[0].id, result[0].email, result[0].password);
         return user;
       } catch (e) {
         console.error(e);
