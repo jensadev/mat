@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/meal.controller');
 const { body, validationResult  } = require('express-validator');
+const { verify } = require('../middlewares/verify');
 
 router
-  .route('/')
+  .route('/', verify)
   .get(controller.index)
   .post(
     body('name').not().isEmpty().trim().escape(),
