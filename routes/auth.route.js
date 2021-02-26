@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const authcontroller = require('../controllers/auth.controller');
 const registercontroller = require('../controllers/register.controller');
-const { body, validationResult  } = require('express-validator');
+const { body } = require('express-validator');
+const { verify } = require('../middlewares/verify');
 
 router
   .route('/login')
@@ -20,7 +21,9 @@ router
     registercontroller.store);
 router
   .route('/logout')
-  .post(authcontroller.destroy);
+  .post(
+    verify,
+    authcontroller.destroy);
   // .post(controller.update)
   // .delete(controller.destroy);
 // router

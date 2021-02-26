@@ -1,28 +1,22 @@
 const { query, pool } = require('./db.model');
 
 class Meal {
-  constructor(obj) {
-    if ( typeof obj === 'undefined') {
-      throw 'Error: Undefined object';
-    }
-    this.name = obj.name;
-    this.type_id = obj.type_id;
-    this.date = obj.date;
-    this.id = typeof obj.id === 'undefined' ? null : obj.id;
+  constructor(id, name, type, date = new Date().toISOString().split('T')[0]) {
+    this.name = name;
+    this.type_id = type;
+    this.date = date;
+    this.id = id ? id : null;
   }
 
-  async save(obj = {}) {
+  async save() {
     if (this.id) {
-      this.name = obj.name;
-      this.type_id = obj.type_id;
-      this.date = obj.date;
       try {
         const sql = `UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()  WHERE id = ?`;
         const result = await query(sql, [this.name, this.type_id, this.date, this.id]);
-        return result.changedRows;
+        return this;
       } catch (e) {
         console.error(e);
-        return 0;
+        return false;
       }
     } else {
       try {
@@ -30,10 +24,10 @@ class Meal {
           `INSERT INTO meals (name, type_id, date, created_at, updated_at) VALUES ( ?, ?, ?, now(), now() )`;
         const result = await query(sql, [this.name, this.type_id, this.date]);
         this.id = result.insertId;
-        return result.affectedRows;
+        return this;
       } catch (e) {
         console.error(e);
-        return 0;
+        return false;
       }
     }
   }
@@ -43,10 +37,14 @@ class Meal {
       try {
         const sql = `SELECT * FROM meals WHERE id = ? LIMIT 1`;
         const result = await query(sql, id);
-        const meal = new Meal(result[0]);
-        return meal;
+        if(result[0]) {
+          const meal = new Meal(result[0].id, result[0].name, result[0].type_id, result[0].date);
+          return meal;  
+        }
+        return false;
       } catch (e) {
         console.error(e);
+        return false;
       }
     } else {
       try {
@@ -54,7 +52,7 @@ class Meal {
         const result = await query(sql);
         const meals = [];
         result.forEach((element) => {
-          meals.push(new Meal(element));
+          meals.push(new Meal(element.id, element.name, element.type_id, element.date));
         });
         return meals;
       } catch (e) {

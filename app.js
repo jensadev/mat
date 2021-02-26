@@ -7,7 +7,7 @@ const cors = require('cors')
 require('dotenv').config({path: './.env'});
 
 const indexRouter = require('./routes/index.route');
-const mealRouter = require('./routes/meal.route');
+const mealsRouter = require('./routes/meals.route');
 const authRouter = require('./routes/auth.route');
 
 const app = express();
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/meals', mealRouter);
+app.use('/api/meals', mealsRouter);
 app.use('/api/auth', authRouter);
 app.use('/', indexRouter);
 
