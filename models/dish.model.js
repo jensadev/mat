@@ -12,15 +12,13 @@ class Dish {
   static async search(name = null) {
     if (name) {
       const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
-      const result = await query(sql, ['%' + name + '%']);
-
-
-
+      const result = await query(sql, [name + '%']);
       if (result.length > 1) {
         const dishes = [];
 
         result.forEach(element => {
-            dishes.push(new Dish(element.id, element.name, element.user_id));
+          let dish = new Dish(element.id, element.name, element.user_id);
+          dishes.push(dish);
         });
 
         return dishes;  

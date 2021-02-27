@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "mocha -r dotenv/config --timeout 10000 --exit",
+    "test": "mocha -r dotenv/config --timeout 10000 --exit --recursive test/*",
+    "test-spec": "mocha -r dotenv/config --timeout 10000 --exit",
     "coverage": "nyc --reporter=html --reporter=text mocha -r dotenv/config --exit --timeout 10000"
   },
   "dependencies": {
