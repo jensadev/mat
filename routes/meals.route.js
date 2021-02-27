@@ -8,7 +8,7 @@ router
   .route('/')
   .get(controller.index)
   .post(
-    body('name').not().isEmpty().trim().escape(),
+    body('dish_id').toInt(),
     body('type_id').toInt(),
     body('date').toDate(),
     verify,
@@ -20,7 +20,7 @@ router
     controller.show)
   .put(
     param('id').isInt(),
-    body('name').not().isEmpty().trim().escape(),
+    body('dish_id').toInt(),
     body('type_id').toInt(),
     body('date').toDate(),
     verify,

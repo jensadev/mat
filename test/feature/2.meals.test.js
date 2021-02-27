@@ -2,6 +2,7 @@ const Meal = require('../../models/meal.model');
 const request = require('supertest');
 const expect = require('chai').expect;
 const app = require('../../app');
+const Dish = require('../../models/dish.model');
 
 describe('api/meals', async () => {
   let token;
@@ -23,11 +24,12 @@ describe('api/meals', async () => {
 
   describe('GET /', () => {
     it('should return all meals', async () => {
-
-      const meal = new Meal(null, 'Korv med bröd', 2);
+      let dish = await Dish.search('korv med bröd');
+      let meal = new Meal(null, dish.id, 2, dish.name);
       await meal.save();
-      const meal2 =  new Meal(null, 'Laxsoppa', 3);
-      await meal2.save();
+      dish = await Dish.search('Falukorv med makaroner');
+      meal = new Meal(null, dish.id, 2, dish.name);
+      await meal.save();
 
       const res = await request(app).get('/api/meals');
       expect(res.status).to.equal(200);
@@ -37,8 +39,11 @@ describe('api/meals', async () => {
 
   describe('GET /:id', () => {
     let meal;
+    let dish;
     before(async () => {
-      meal = new Meal(null, 'Fiskpinnar med potatismos', 2);
+      dish = new Dish(null, 'Fiskpinnar med potatismos', 1);
+      dish = await dish.save();
+      meal = new Meal(null, dish.id, 2, dish.name);
       meal = await meal.save();
       return meal;
     });
@@ -75,12 +80,19 @@ describe('api/meals', async () => {
   });
 
   describe('POST /', () => {
+    let dish;
+    before(async () => {
+      dish = new Dish(null, 'Tacos', 1);
+      dish = await dish.save();
+      return dish;
+    });
+
     it('should create a meal when the request body is valid', (done) => {
       request(app)
       .post('/api/meals')
       .set('Authorization', 'Bearer ' + token)
       .send({
-        name: 'Tacos',
+        dish_id: dish.id,
         type_id: 3,
         date: new Date().toISOString().split('T')[0]
       })
@@ -88,7 +100,6 @@ describe('api/meals', async () => {
       .end((err, res) => {
         if (err) throw err;
         expect(res.body).to.have.property('id');
-        expect(res.body).to.have.property('name', 'Tacos');
         return done();  
       });
     });
@@ -97,9 +108,12 @@ describe('api/meals', async () => {
       request(app)
       .post('/api/meals')
       .set('Authorization', 'Bearer ' + token)
-      .send({ name: '', type_id: 'Glass', date: '19821312' })
+      .send({ dish_id: '', type_id: 'Glass', date: '19821312' })
       .expect(400)
-      .end(done);
+      .end((err, res) => {
+        if (err) throw err;
+        return done();  
+      });
     });
 
     // add more tests to validate request body accordingly eg, make sure name is more than 3 characters etc
@@ -108,24 +122,26 @@ describe('api/meals', async () => {
   describe('PUT /:id', () => {
     let meal;
     before(async () => {
-      meal = new Meal(null, 'Fiskpinnar med potatismos', 2);
+      let dish = await Dish.search('korv med bröd');
+      meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
       return meal;
     });
 
-    it('should update the existing meal', (done) => {
+    it('should update the existing meal', async (done) => {
+      let dish = await Dish.search('Tacos');
       request(app)
       .put('/api/meals/' + meal.id)
       .set('Authorization', 'Bearer ' + token)
       .send({
-        name: 'Hamburgare',
+        dish_id: dish.id,
         type_id: 3,
         date: new Date().toISOString().split('T')[0]
       })
       .expect(200)
       .end((err, res) => {
         if (err) throw err;
-        expect(res.body).to.have.property('name', 'Hamburgare');
+        expect(res.body).to.have.property('name', dish.name);
         return done();
       });
     });
@@ -134,7 +150,8 @@ describe('api/meals', async () => {
   describe('DELETE /:id', () => {
     let meal;
     before(async () => {
-      meal = new Meal(null, 'Fiskpinnar med potatismos', 2);
+      let dish = await Dish.search('korv med bröd');
+      meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
       return meal;
     });

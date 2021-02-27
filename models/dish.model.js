@@ -17,8 +17,7 @@ class Dish {
         const dishes = [];
 
         result.forEach(element => {
-          let dish = new Dish(element.id, element.name, element.user_id);
-          dishes.push(dish);
+          dishes.push(new Dish(element.id, element.name, element.user_id));
         });
 
         return dishes;  
@@ -31,28 +30,18 @@ class Dish {
   }
 
   async save() {
-    // if (this.id) {
-    //   try {
-    //     const sql = `UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()  WHERE id = ?`;
-    //     const result = await query(sql, [this.name, this.type_id, this.date, this.id]);
-    //     return this;
-    //   } catch (e) {
-    //     console.error(e);
-    //     return false;
-    //   }
-    // } else {
-    //   try {
-        const sql =
-          `INSERT INTO dishes (name, user_id, created_at, updated_at) VALUES ( ?, ?, now(), now() )`;
-        const result = await query(sql, [this.name, this.userId]);
-        this.id = result.insertId;
-        return this;
-      // } catch (e) {
-      //   console.error(e);
-      //   return false;
-      // }
-    //   }
-    // }
+    if (this.id) {
+      const sql = 'UPDATE dishes SET name = ?, user_id = ?, updated at = now() where id = ?';
+      const result = await query(sql, [this.name, this.userId]);
+      console.table(result)
+      return this;
+    } else {
+      const sql = `INSERT INTO dishes (name, user_id, created_at, updated_at) 
+        VALUES ( ?, ?, now(), now() )`;
+      const result = await query(sql, [this.name, this.userId]);
+      this.id = result.insertId;
+      return this;
+    }
   }
 
   static async find(id = null) {

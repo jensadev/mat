@@ -7,10 +7,10 @@ const { expect, assert } = require('chai');
 describe('Dish', () => {
   let dish;
   // add a test hook
-  before((done) => {
+  before(() => {
     // ...some logic before each test is run
     dish = new Dish(null, 'Köttbullar', 1);
-    return done();
+    return dish;
   })
   
   context('without arguments', () => {
