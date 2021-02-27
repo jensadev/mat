@@ -22,7 +22,6 @@ module.exports.show = async (req, res) => {
 
 module.exports.store = async (req, res) => {
   const errors = validationResult(req);
-  console.table(req.body)
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
@@ -47,9 +46,9 @@ module.exports.update = async (req, res) => {
     return res.status(400).json({ errors: 'Invalid request' });
   }
 
-  meal.dish_id = req.body.dish_id;
-  meal.type_id = req.body.type_id;
-  meal.date = req.body.date;
+  meal.dishId = req.body.dish_id || meal.dishId;
+  meal.typeId = req.body.type_id || meal.typeId;
+  meal.date = req.body.date || meal.date;
 
   const result = await meal.save();
   if (result) {

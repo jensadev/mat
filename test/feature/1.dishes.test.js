@@ -4,13 +4,13 @@ const { expect, assert } = require('chai');
 const { query } = require('../../models/db.model');
 // const app = require('../app');
 
-describe('dish', () => {
-  before(async () => {
+describe('Dish feature', () => {
+  before('truncate table', async () => {
     await query('TRUNCATE TABLE dishes', []);
   });
 
   describe('search', () => {
-    before(async () => {
+    before('create dishes', async () => {
       const dish = new Dish(null, 'Korv med bröd', 1);
       await dish.save();
       const dish2 =  new Dish(null, 'Falukorv med makaroner', 1);

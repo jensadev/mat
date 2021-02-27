@@ -3,11 +3,12 @@ const request = require('supertest');
 const expect = require('chai').expect;
 const app = require('../../app');
 const Dish = require('../../models/dish.model');
+const { query } = require('express-validator');
 
 describe('api/meals', async () => {
   let token;
 
-  before((done) => {
+  before('create a bearer token', (done) => {
     request(app)
     .post('/api/auth/login')
     .type('form')
@@ -16,10 +17,14 @@ describe('api/meals', async () => {
       password: process.env.TEST_PASSWORD
     })
     .end((err, res) => {
-      if (err) throw err;
+      if (err) return done(err);
       token = res.body.token;
       return done();
     });
+  });
+
+  before('truncate meals', async () => {
+    await query('TRUNCATE TABLE meals');
   });
 
   describe('GET /', () => {
@@ -40,7 +45,7 @@ describe('api/meals', async () => {
   describe('GET /:id', () => {
     let meal;
     let dish;
-    before(async () => {
+    before('create meal and dish', async () => {
       dish = new Dish(null, 'Fiskpinnar med potatismos', 1);
       dish = await dish.save();
       meal = new Meal(null, dish.id, 2, dish.name);
@@ -53,7 +58,7 @@ describe('api/meals', async () => {
       .get('/api/meals/' + meal.id)
       .expect(200).
       end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         expect(res.body).to.have.property('name', meal.name);
         return done();
       });
@@ -64,7 +69,7 @@ describe('api/meals', async () => {
       .get('/api/meals/e')
       .expect(400)
       .end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         return done();
       });
     });
@@ -73,7 +78,7 @@ describe('api/meals', async () => {
       request(app)
       .get('/api/meals/533')
       .end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         return done();
       });
     });
@@ -81,7 +86,7 @@ describe('api/meals', async () => {
 
   describe('POST /', () => {
     let dish;
-    before(async () => {
+    before('create a dish', async () => {
       dish = new Dish(null, 'Tacos', 1);
       dish = await dish.save();
       return dish;
@@ -98,7 +103,7 @@ describe('api/meals', async () => {
       })
       .expect(200)
       .end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         expect(res.body).to.have.property('id');
         return done();  
       });
@@ -111,7 +116,7 @@ describe('api/meals', async () => {
       .send({ dish_id: '', type_id: 'Glass', date: '19821312' })
       .expect(400)
       .end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         return done();  
       });
     });
@@ -121,16 +126,16 @@ describe('api/meals', async () => {
 
   describe('PUT /:id', () => {
     let meal;
-    before(async () => {
+    before('create a meal', async () => {
       let dish = await Dish.search('korv med bröd');
       meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
       return meal;
     });
 
-    it('should update the existing meal', async (done) => {
+    it('should update the existing meal', async () => {
       let dish = await Dish.search('Tacos');
-      request(app)
+      const res = await request(app)
       .put('/api/meals/' + meal.id)
       .set('Authorization', 'Bearer ' + token)
       .send({
@@ -138,18 +143,14 @@ describe('api/meals', async () => {
         type_id: 3,
         date: new Date().toISOString().split('T')[0]
       })
-      .expect(200)
-      .end((err, res) => {
-        if (err) throw err;
-        expect(res.body).to.have.property('name', dish.name);
-        return done();
-      });
+      .expect(200);
+      expect(res.body).to.have.property('dishId', dish.id);
     });
   });
 
   describe('DELETE /:id', () => {
     let meal;
-    before(async () => {
+    before('create a meal', async () => {
       let dish = await Dish.search('korv med bröd');
       meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
@@ -162,12 +163,14 @@ describe('api/meals', async () => {
       .set('Authorization', 'Bearer ' + token)
       .expect(200)
       .end((err, res) => {
-        if (err) throw err;
+        if (err) return done(err);
         request(app)
         .get('/api/meals/' + meal.id)
         .expect(404)
-        .end();
-        return done();
+        .end((err, res) => {
+          if (err) return done(err);
+          return done();
+        });
       });
     });
   });

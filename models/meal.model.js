@@ -16,6 +16,7 @@ class Meal {
         SET dish_id = ?, type_id = ?, date = ?, updated_at = now()
         WHERE id = ?`;
       const result = await query(sql, [this.dishId, this.typeId, this.date, this.id]);
+      this.name = null;
       return this;
     } else {
       const sql = `INSERT INTO meals (dish_id, type_id, date, created_at, updated_at)

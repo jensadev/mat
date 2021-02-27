@@ -8,9 +8,9 @@ router
   .route('/')
   .get(controller.index)
   .post(
-    body('dish_id').toInt(),
-    body('type_id').toInt(),
-    body('date').toDate(),
+    body('dish_id').isInt(),
+    body('type_id').isInt(),
+    body('date').isDate(),
     verify,
     controller.store);
 router
@@ -20,13 +20,13 @@ router
     controller.show)
   .put(
     param('id').isInt(),
-    body('dish_id').toInt(),
-    body('type_id').toInt(),
-    body('date').toDate(),
+    body('dish_id').isInt().optional({nullable: true}),
+    body('type_id').isInt().optional({nullable: true}),
+    body('date').isDate().optional({nullable: true}),
     verify,
     controller.update)
   .delete(
-    param('id').toInt(),
+    param('id').isInt(),
     verify,
     controller.destroy);
 // router
