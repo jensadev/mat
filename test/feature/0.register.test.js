@@ -1,7 +1,7 @@
 const request = require('supertest');
 const expect = require('chai').expect;
-const app = require('../app');
-const { query } = require('../models/db.model');
+const app = require('../../app');
+const { query } = require('../../models/db.model');
 
 describe('api/auth/register', () => {
   before(async () => {

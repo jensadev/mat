@@ -1,18 +1,26 @@
 const { query, pool } = require('./db.model');
+const dish = require('./dish.model');
 
 class Meal {
-  constructor(id, name, type, date = new Date().toISOString().split('T')[0]) {
-    this.name = name;
-    this.type_id = type;
+  constructor(id, dish_id, name, type, date = new Date().toISOString().split('T')[0]) {
+    this.name = name ? name : null;
+    this.dishId = dish_id ? dish_id : null;
+    this.typeId = type;
     this.date = date;
     this.id = id ? id : null;
   }
 
+  // async setDish(nam) {
+  //   let dish = 
+  // }
+
   async save() {
     if (this.id) {
       try {
-        const sql = `UPDATE meals SET name = ?, type_id = ?, date = ?, updated_at = now()  WHERE id = ?`;
-        const result = await query(sql, [this.name, this.type_id, this.date, this.id]);
+        const sql = `UPDATE meals 
+          SET name = ?, type_id = ?, date = ?, updated_at = now()
+          WHERE id = ?`;
+        const result = await query(sql, [this.name, this.typeId, this.date, this.id]);
         return this;
       } catch (e) {
         console.error(e);
@@ -20,9 +28,9 @@ class Meal {
       }
     } else {
       try {
-        const sql =
-          `INSERT INTO meals (name, type_id, date, created_at, updated_at) VALUES ( ?, ?, ?, now(), now() )`;
-        const result = await query(sql, [this.name, this.type_id, this.date]);
+        const sql = `INSERT INTO meals (name, type_id, date, created_at, updated_at)
+          VALUES ( ?, ?, ?, now(), now() )`;
+        const result = await query(sql, [this.name, this.typeId, this.date]);
         this.id = result.insertId;
         return this;
       } catch (e) {
