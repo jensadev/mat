@@ -6,7 +6,7 @@ const { query } = require('../../models/db.model');
 describe('api/auth/register', () => {
   before(async () => {
     await query('TRUNCATE TABLE users');
-    await query('truncate table meals');
+    await query('TRUNCATE TABLE meals');
   });
 
   describe('POST /', () => {

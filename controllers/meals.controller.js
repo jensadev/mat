@@ -3,6 +3,7 @@ const { body, validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
   let meals = await Meal.find();
+  console.table(meals);
   return res.send(meals);
 };
 

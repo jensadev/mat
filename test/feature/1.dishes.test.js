@@ -6,7 +6,7 @@ const { query } = require('../../models/db.model');
 
 describe('Dish feature', () => {
   before('truncate table', async () => {
-    await query('TRUNCATE TABLE dishes', []);
+    await query('TRUNCATE TABLE dishes');
   });
 
   describe('search', () => {

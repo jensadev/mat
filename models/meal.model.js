@@ -2,10 +2,11 @@ const { query, pool } = require('./db.model');
 const dish = require('./dish.model');
 
 class Meal {
-  constructor(id, dish, type, name, date = new Date().toISOString().split('T')[0]) {
-    this.name = name ? name : null;
-    this.dishId = dish ? dish : null;
-    this.typeId = type;
+  constructor(id, dish_id, type_id, dish, type, date = new Date().toISOString().split('T')[0]) {
+    this.dish = dish ? dish : null;
+    this.type = type ? type : null;
+    this.dishId = dish_id ? dish_id : null;
+    this.typeId = type_id;
     this.date = date;
     this.id = id ? id : null;
   }
@@ -16,7 +17,8 @@ class Meal {
         SET dish_id = ?, type_id = ?, date = ?, updated_at = now()
         WHERE id = ?`;
       const result = await query(sql, [this.dishId, this.typeId, this.date, this.id]);
-      this.name = null;
+      this.dish = null;
+      this.type = null;
       return this;
     } else {
       const sql = `INSERT INTO meals (dish_id, type_id, date, created_at, updated_at)
@@ -29,27 +31,31 @@ class Meal {
 
   static async find(id = null) {
     if (id) {
-      const sql = `SELECT meals.*, dishes.name 
+      const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
         JOIN dishes
         ON meals.dish_id = dishes.id
+        JOIN mealtypes
+        ON meals.type_id = mealtypes.id
         WHERE meals.id = ? LIMIT 1`;
       const result = await query(sql, id);
       if(result[0]) {
-        const meal = new Meal(result[0].id, result[0].dish_id, result[0].type_id, result[0].name, result[0].date);
+        const meal = new Meal(result[0].id, result[0].dish_id, result[0].type_id, result[0].dish, result[0].type, result[0].date);
         return meal;  
       }
       return false;
     } else {
-      const sql = `SELECT meals.*, dishes.name
+      const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
         JOIN dishes
         ON meals.dish_id = dishes.id
+        JOIN mealtypes
+        ON meals.type_id = mealtypes.id
         ORDER BY date DESC`;
       const result = await query(sql);
       const meals = [];
       result.forEach((element) => {
-        meals.push(new Meal(element.id, element.dish_id, element.type_id, element.name, element.date));
+        meals.push(new Meal(element.id, element.dish_id, element.type_id, element.dish, element.type, element.date));
       });
       return meals;
     }
