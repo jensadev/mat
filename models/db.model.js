@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mysql = require('mysql');
 
 const pool = mysql.createPool({
@@ -10,7 +11,7 @@ const pool = mysql.createPool({
 
 function query (sql, params) {
   return new Promise((resolve, reject) => {
-    pool.query(sql, params, function (err, result, fields) {
+    pool.query(sql, params, function (err, result) {
       if (err) reject(err);
       resolve(result);
     });

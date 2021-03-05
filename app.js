@@ -3,6 +3,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
+const compression = require('compression')
+const helmet = require('helmet')
 
 require('dotenv').config({path: './.env'});
 
@@ -13,6 +15,8 @@ const authRouter = require('./routes/auth.route');
 const app = express();
 
 app.use(cors());
+app.use(helmet());
+app.use(compression());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

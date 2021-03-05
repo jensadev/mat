@@ -1,5 +1,5 @@
 const User = require('../models/user.model');
-const { body, validationResult  } = require('express-validator');
+const { validationResult  } = require('express-validator');
 const bcrypt = require('bcrypt');
 
 module.exports.create = async (req, res) => {

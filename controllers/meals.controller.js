@@ -1,10 +1,9 @@
 const Meal = require('../models/meal.model');
-const { body, validationResult  } = require('express-validator');
+const { validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
   let meals = await Meal.find();
-  console.table(meals);
-  return res.send(meals);
+  return res.status(200).json(meals);
 };
 
 module.exports.show = async (req, res) => {
@@ -16,18 +15,20 @@ module.exports.show = async (req, res) => {
   let meal = await Meal.find(req.params.id);
 
   if (meal) {
-    return res.send(meal);
+    return res.status(200).json(meal);
   }
   return res.status(404).json({ errors: 'Object not found' }); 
 };
 
 module.exports.store = async (req, res) => {
   const errors = validationResult(req);
+  console.table(req.body)
   if (!errors.isEmpty()) {
+    console.table(errors.array())
     return res.status(400).json({ errors: errors.array() });
   }
 
-  let meal = new Meal(null, req.body.dish_id, req.body.type_id, req.body.date);
+  let meal = new Meal(null, req.body.dish_id, req.body.type_id, req.body.date || false);
   const result = await meal.save();
   if (result) {
     return res.send(meal);

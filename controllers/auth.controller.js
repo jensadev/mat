@@ -1,5 +1,5 @@
 const User = require('../models/user.model');
-const { body, validationResult  } = require('express-validator');
+// const { body, validationResult  } = require('express-validator');
 const bcrypt = require('bcrypt');
 
 module.exports.create = async (req, res) => {
@@ -19,7 +19,7 @@ module.exports.store = async (req, res) => {
       if (err) {
         return res.status(500).json(err);
       } else if (match) {
-        return res.status(200).json( { token: user.generateToken() } );
+        return res.status(200).json( { accessToken: user.generateToken() } );
       } else {
         return res.status(403).json( { error: 'Passwords do not match.' } );
       }

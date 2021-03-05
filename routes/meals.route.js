@@ -10,7 +10,7 @@ router
   .post(
     body('dish_id').isInt(),
     body('type_id').isInt(),
-    body('date').isDate(),
+    body('date').isDate().optional({nullable: true}),
     verify,
     controller.store);
 router

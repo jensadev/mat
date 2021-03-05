@@ -6,21 +6,21 @@ const { body } = require('express-validator');
 const { verify } = require('../middlewares/verify');
 
 router
-  .route('/login')
-  .get(authcontroller.create)
+  .route('/signin')
+  // .get(authcontroller.create)
   .post(
     body('email').isEmail(),
     body('password').notEmpty(),
     authcontroller.store);
 router
-  .route('/register')
-  .get(registercontroller.create)
+  .route('/signup')
+  // .get(registercontroller.create)
   .post(
     body('email').isEmail(),
     body('password').notEmpty(),
     registercontroller.store);
 router
-  .route('/logout')
+  .route('/signout')
   .post(
     verify,
     authcontroller.destroy);

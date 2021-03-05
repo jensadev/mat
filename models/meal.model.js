@@ -1,13 +1,13 @@
-const { query, pool } = require('./db.model');
-const dish = require('./dish.model');
+const { query } = require('./db.model');
+// const dish = require('./dish.model');
 
 class Meal {
-  constructor(id, dish_id, type_id, dish, type, date = new Date().toISOString().split('T')[0]) {
+  constructor(id, dish_id, type_id, dish, type, date) {
     this.dish = dish ? dish : null;
     this.type = type ? type : null;
     this.dishId = dish_id ? dish_id : null;
     this.typeId = type_id;
-    this.date = date;
+    this.date = date ? date : new Date().toISOString().split('T')[0];
     this.id = id ? id : null;
   }
 
@@ -19,13 +19,15 @@ class Meal {
       const result = await query(sql, [this.dishId, this.typeId, this.date, this.id]);
       this.dish = null;
       this.type = null;
-      return this;
+      if (result.affectedRows) return this;
     } else {
       const sql = `INSERT INTO meals (dish_id, type_id, date, created_at, updated_at)
         VALUES ( ?, ?, ?, now(), now() )`;
       const result = await query(sql, [this.dishId, this.typeId, this.date]);
-      this.id = result.insertId;
-      return this;
+      if (result.insertId) {
+        this.id = result.insertId;
+        return this;
+      }
     }
   }
 

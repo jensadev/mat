@@ -1,4 +1,3 @@
-const e = require('express');
 const { query } = require('./db.model');
 
 class Dish {

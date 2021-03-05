@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const { query } = require("./db.model");
 
@@ -27,7 +26,8 @@ class User {
   }
 
   generateToken() {
-    return jwt.sign({ data: this }, process.env.SECRET, { expiresIn: '24h' });
+    // eslint-disable-next-line no-undef
+    return jwt.sign({ data: this.email }, process.env.SECRET, { expiresIn: '24h' });
   }
 
   static async find(field, value) {
