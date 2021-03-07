@@ -21,7 +21,7 @@ module.exports.store = async (req, res) => {
       } else if (match) {
         return res.status(200).json( { accessToken: user.generateToken() } );
       } else {
-        return res.status(403).json( { error: 'Passwords do not match.' } );
+        return res.status(401).json( { error: 'Passwords do not match.' } );
       }
     });
   }

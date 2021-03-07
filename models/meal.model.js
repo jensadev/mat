@@ -31,7 +31,7 @@ class Meal {
     }
   }
 
-  static async find(id = null) {
+  static async find(id = null, user = false) {
     if (id) {
       const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
@@ -47,14 +47,27 @@ class Meal {
       }
       return false;
     } else {
-      const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
+      let result;
+      if (user) {
+        const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
+        FROM meals 
+        JOIN dishes
+        ON meals.dish_id = dishes.id
+        JOIN mealtypes
+        ON meals.type_id = mealtypes.id
+        ORDER BY date DESC
+        WHERE user_id = ?`;
+        result = await query(sql, [user]);
+      } else {
+        const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
         JOIN dishes
         ON meals.dish_id = dishes.id
         JOIN mealtypes
         ON meals.type_id = mealtypes.id
         ORDER BY date DESC`;
-      const result = await query(sql);
+        result = await query(sql);
+      }
       const meals = [];
       result.forEach((element) => {
         meals.push(new Meal(element.id, element.dish_id, element.type_id, element.dish, element.type, element.date));

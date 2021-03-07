@@ -11,6 +11,8 @@ require('dotenv').config({path: './.env'});
 const indexRouter = require('./routes/index.route');
 const mealsRouter = require('./routes/meals.route');
 const authRouter = require('./routes/auth.route');
+const dishRouter = require('./routes/dish.route');
+const userRouter = require('./routes/user.route');
 
 const app = express();
 
@@ -21,16 +23,21 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// eslint-disable-next-line no-undef
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/meals', mealsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/dish', dishRouter);
+app.use('/api/user', userRouter);
 app.use('/', indexRouter);
 
 app.use((req, res, next) => {
+  // eslint-disable-next-line no-undef
   next(createError(404));
 });
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
 

@@ -8,23 +8,31 @@ class Dish {
     this.id = id ? id : null;
   }
 
-  static async search(name = null) {
-    if (name) {
+  static async find(param = null) {
+    const id = parseInt(param);
+    if (param === null) {
+      const sql = 'SELECT * FROM dishes';
+      const result = await query(sql);
+      return result;
+    } else if (!isNaN(id)) {
+      const sql = 'SELECT * FROM dishes WHERE id = ?';
+      const result = await query(sql, [id]);
+      return result;
+    } else if (isNaN(id)) {
       const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
-      const result = await query(sql, [name + '%']);
+      const result = await query(sql, [param + '%']);
+      if (result.length == 0) {
+        return false;
+      }
       if (result.length > 1) {
         const dishes = [];
-
         result.forEach(element => {
           dishes.push(new Dish(element.id, element.name, element.user_id));
         });
-
         return dishes;  
       } else {
-        return result[0];
+        return result;
       }
-    } else {
-      return false;
     }
   }
 
@@ -43,36 +51,37 @@ class Dish {
     }
   }
 
-  static async find(id = null) {
-    // if (id) {
-    //   try {
-    //     const sql = `SELECT * FROM meals WHERE id = ? LIMIT 1`;
-    //     const result = await query(sql, id);
-    //     if(result[0]) {
-    //       const meal = new Meal(result[0].id, result[0].name, result[0].type_id, result[0].date);
-    //       return meal;  
-    //     }
-    //     return false;
-    //   } catch (e) {
-    //     console.error(e);
-    //     return false;
-    //   }
-    // } else {
-    //   try {
-    //     const sql = `SELECT * FROM meals ORDER BY date DESC`;
-    //     const result = await query(sql);
-    //     const meals = [];
-    //     result.forEach((element) => {
-    //       meals.push(new Meal(element.id, element.name, element.type_id, element.date));
-    //     });
-    //     return meals;
-    //   } catch (e) {
-    //     console.error(e);
-    //   }
-    // }
-  }
+  // static async find(id = null) {
+  //   // if (id) {
+  //   //   try {
+  //   //     const sql = `SELECT * FROM meals WHERE id = ? LIMIT 1`;
+  //   //     const result = await query(sql, id);
+  //   //     if(result[0]) {
+  //   //       const meal = new Meal(result[0].id, result[0].name, result[0].type_id, result[0].date);
+  //   //       return meal;  
+  //   //     }
+  //   //     return false;
+  //   //   } catch (e) {
+  //   //     console.error(e);
+  //   //     return false;
+  //   //   }
+  //   // } else {
+  //   //   try {
+  //   //     const sql = `SELECT * FROM meals ORDER BY date DESC`;
+  //   //     const result = await query(sql);
+  //   //     const meals = [];
+  //   //     result.forEach((element) => {
+  //   //       meals.push(new Meal(element.id, element.name, element.type_id, element.date));
+  //   //     });
+  //   //     return meals;
+  //   //   } catch (e) {
+  //   //     console.error(e);
+  //   //   }
+  //   // }
+  // }
 
   static async delete(id) {
+    console.log(id);
   //   if(id) {
   //     try {
   //       const sql = `DELETE FROM meals WHERE id = ?`;
