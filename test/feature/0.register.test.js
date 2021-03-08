@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const app = require('../../app');
 const { query } = require('../../models/db.model');
 
-describe('api/auth/register', () => {
+describe('api/auth/signup', () => {
   before(async () => {
     await query('TRUNCATE TABLE users');
     await query('TRUNCATE TABLE meals');
@@ -12,7 +12,7 @@ describe('api/auth/register', () => {
   describe('POST /', () => {
     it('should create a new user when request is valid', (done) => {
       request(app)
-      .post('/api/auth/register')
+      .post('/api/auth/signup')
       .send({
         email: process.env.TEST_EMAIL,
         password: process.env.TEST_PASSWORD
@@ -28,7 +28,7 @@ describe('api/auth/register', () => {
 
     it('should fail to create a user with a invalid request body', (done) => {
       request(app)
-      .post('/api/auth/register')
+      .post('/api/auth/signup')
       .send({})
       .expect(400)
       .end(done);

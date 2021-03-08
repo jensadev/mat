@@ -1,51 +1,45 @@
 const { query } = require('./db.model');
 
 class Dish {
-  constructor(id, name, userId) {
-    if (!name || !userId) throw new Error('Property required');
+  constructor(id, name) {
+    if (!name ) throw new Error('Property required');
     this.name = name;
-    this.userId = userId;
     this.id = id ? id : null;
   }
 
   static async find(param = null) {
     const id = parseInt(param);
+    let result;
     if (param === null) {
       const sql = 'SELECT * FROM dishes';
-      const result = await query(sql);
-      return result;
+      result = await query(sql);
     } else if (!isNaN(id)) {
       const sql = 'SELECT * FROM dishes WHERE id = ?';
-      const result = await query(sql, [id]);
-      return result;
+      result = await query(sql, [id]);
     } else if (isNaN(id)) {
       const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
-      const result = await query(sql, [param + '%']);
-      if (result.length == 0) {
-        return false;
-      }
-      if (result.length > 1) {
-        const dishes = [];
-        result.forEach(element => {
-          dishes.push(new Dish(element.id, element.name, element.user_id));
-        });
-        return dishes;  
-      } else {
-        return result;
-      }
+      result = await query(sql, [param + '%']);
     }
+    if (result.length > 0) {
+      const dishes = [];
+      result.forEach(element => {
+        dishes.push(new Dish(element.id, element.name));
+      });
+      return dishes;  
+    }
+    return false;
   }
 
   async save() {
     if (this.id) {
-      const sql = 'UPDATE dishes SET name = ?, user_id = ?, updated at = now() where id = ?';
-      const result = await query(sql, [this.name, this.userId]);
+      const sql = 'UPDATE dishes SET name = ?, updated at = now() where id = ?';
+      const result = await query(sql, [this.name, this.id]);
       console.table(result)
       return this;
     } else {
-      const sql = `INSERT INTO dishes (name, user_id, created_at, updated_at) 
-        VALUES ( ?, ?, now(), now() )`;
-      const result = await query(sql, [this.name, this.userId]);
+      const sql = `INSERT INTO dishes (name, created_at, updated_at) 
+        VALUES ( ?, now(), now() )`;
+      const result = await query(sql, [this.name]);
       this.id = result.insertId;
       return this;
     }

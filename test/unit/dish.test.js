@@ -13,12 +13,12 @@ describe('Dish unit', () => {
 
   context('with arguments', () => {
     it('should return an object', () => {
-      let dish = new Dish(null, 'Fläsklägg med rotmos', 1);
+      let dish = new Dish(null, 'Fläsklägg med rotmos');
       expect(dish).to.be.an('object');
     });
 
     it('should return an object with properties', () => {
-      let dish = new Dish(null, 'Fiskpinnar', 1);
+      let dish = new Dish(null, 'Fiskpinnar');
       expect(dish).to.be.an('object')
       .that.has.property('name').that.includes('Fiskpinnar');
     });

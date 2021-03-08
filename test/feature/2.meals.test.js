@@ -10,7 +10,7 @@ describe('api/meals', async () => {
 
   before('create a bearer token', (done) => {
     request(app)
-    .post('/api/auth/login')
+    .post('/api/auth/signin')
     .type('form')
     .send({
       email: process.env.TEST_EMAIL,
@@ -29,10 +29,10 @@ describe('api/meals', async () => {
 
   describe('GET /', () => {
     it('should return all meals', async () => {
-      let dish = await Dish.search('korv med bröd');
+      let dish = await Dish.find('korv med bröd');
       let meal = new Meal(null, dish.id, 2, dish.name);
       await meal.save();
-      dish = await Dish.search('Falukorv med makaroner');
+      dish = await Dish.find('Falukorv med makaroner');
       meal = new Meal(null, dish.id, 2, dish.name);
       await meal.save();
 
@@ -87,7 +87,7 @@ describe('api/meals', async () => {
   describe('POST /', () => {
     let dish;
     before('create a dish', async () => {
-      dish = new Dish(null, 'Tacos', 1);
+      dish = new Dish(null, 'Tacos');
       dish = await dish.save();
       return dish;
     });
@@ -127,14 +127,14 @@ describe('api/meals', async () => {
   describe('PUT /:id', () => {
     let meal;
     before('create a meal', async () => {
-      let dish = await Dish.search('korv med bröd');
+      let dish = await Dish.find('korv med bröd');
       meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
       return meal;
     });
 
     it('should update the existing meal', async () => {
-      let dish = await Dish.search('Tacos');
+      let dish = await Dish.find('Tacos');
       const res = await request(app)
       .put('/api/meals/' + meal.id)
       .set('Authorization', 'Bearer ' + token)
@@ -151,7 +151,7 @@ describe('api/meals', async () => {
   describe('DELETE /:id', () => {
     let meal;
     before('create a meal', async () => {
-      let dish = await Dish.search('korv med bröd');
+      let dish = await Dish.find('korv med bröd');
       meal = new Meal(null, dish.id, 2);
       meal = await meal.save();
       return meal;

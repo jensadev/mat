@@ -11,22 +11,22 @@ describe('Dish feature', () => {
 
   describe('search', () => {
     before('create dishes', async () => {
-      const dish = new Dish(null, 'Korv med bröd', 1);
+      const dish = new Dish(null, 'Korv med bröd');
       await dish.save();
-      const dish2 =  new Dish(null, 'Falukorv med makaroner', 1);
+      const dish2 =  new Dish(null, 'Falukorv med makaroner');
       await dish2.save();
-      const dish3 = new Dish(null, 'Korvsoppa', 1);
+      const dish3 = new Dish(null, 'Korvsoppa');
       await dish3.save();
     });
 
     it('should return all matching dishes', async () => {
-      let dishes = await Dish.search('korv');
+      let dishes = await Dish.find('korv');
       expect(dishes.length).to.equal(2);
     });
 
     it('should return matching dish', async () => {
-      let dish = await Dish.search('korv med bröd');
-      expect(dish.name).to.equal('Korv med bröd');
+      let dish = await Dish.find('korv med bröd');
+      expect(dish[0].name).to.equal('Korv med bröd');
     });
   });
 })
