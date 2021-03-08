@@ -12,7 +12,7 @@ const indexRouter = require('./routes/index.route');
 const mealsRouter = require('./routes/meals.route');
 const authRouter = require('./routes/auth.route');
 const dishRouter = require('./routes/dish.route');
-const userRouter = require('./routes/user.route');
+const usersRouter = require('./routes/users.route');
 
 const app = express();
 
@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/meals', mealsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/dish', dishRouter);
-app.use('/api/user', userRouter);
+app.use('/api/users', usersRouter);
 app.use('/', indexRouter);
 
 app.use((req, res, next) => {

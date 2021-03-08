@@ -6,7 +6,7 @@ const Dish = require('../../models/dish.model');
 const { query } = require('express-validator');
 
 describe('api/meals', async () => {
-  let token;
+  var token;
 
   before('create a bearer token', (done) => {
     request(app)
@@ -18,7 +18,7 @@ describe('api/meals', async () => {
     })
     .end((err, res) => {
       if (err) return done(err);
-      token = res.body.token;
+      token = res.body.accessToken;
       return done();
     });
   });
@@ -30,10 +30,10 @@ describe('api/meals', async () => {
   describe('GET /', () => {
     it('should return all meals', async () => {
       let dish = await Dish.find('korv med bröd');
-      let meal = new Meal(null, dish.id, 2, dish.name);
+      let meal = new Meal(null, dish[0].id, 2, 1);
       await meal.save();
       dish = await Dish.find('Falukorv med makaroner');
-      meal = new Meal(null, dish.id, 2, dish.name);
+      meal = new Meal(null, dish[0].id, 2, 1);
       await meal.save();
 
       const res = await request(app).get('/api/meals');
@@ -46,9 +46,9 @@ describe('api/meals', async () => {
     let meal;
     let dish;
     before('create meal and dish', async () => {
-      dish = new Dish(null, 'Fiskpinnar med potatismos', 1);
+      dish = new Dish(null, 'Fiskpinnar med potatismos');
       dish = await dish.save();
-      meal = new Meal(null, dish.id, 2, dish.name);
+      meal = new Meal(null, dish.id, 2, 1);
       meal = await meal.save();
       return meal;
     });
@@ -59,7 +59,7 @@ describe('api/meals', async () => {
       .expect(200).
       end((err, res) => {
         if (err) return done(err);
-        expect(res.body).to.have.property('name', meal.name);
+        expect(res.body).to.have.property('dishId', dish.id);
         return done();
       });
     });
@@ -128,7 +128,7 @@ describe('api/meals', async () => {
     let meal;
     before('create a meal', async () => {
       let dish = await Dish.find('korv med bröd');
-      meal = new Meal(null, dish.id, 2);
+      meal = new Meal(null, dish[0].id, 2, 1);
       meal = await meal.save();
       return meal;
     });
@@ -139,12 +139,12 @@ describe('api/meals', async () => {
       .put('/api/meals/' + meal.id)
       .set('Authorization', 'Bearer ' + token)
       .send({
-        dish_id: dish.id,
+        dish_id: dish[0].id,
         type_id: 3,
         date: new Date().toISOString().split('T')[0]
       })
       .expect(200);
-      expect(res.body).to.have.property('dishId', dish.id);
+      expect(res.body).to.have.property('dishId', dish[0].id);
     });
   });
 
@@ -152,7 +152,7 @@ describe('api/meals', async () => {
     let meal;
     before('create a meal', async () => {
       let dish = await Dish.find('korv med bröd');
-      meal = new Meal(null, dish.id, 2);
+      meal = new Meal(null, dish[0].id, 2, 1);
       meal = await meal.save();
       return meal;
     });

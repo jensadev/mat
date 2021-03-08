@@ -27,7 +27,7 @@ class User {
 
   generateToken() {
     // eslint-disable-next-line no-undef
-    return jwt.sign({ data: this.email }, process.env.SECRET, { expiresIn: '24h' });
+    return jwt.sign({ data: {id: this.id, email: this.email} }, process.env.SECRET, { expiresIn: '24h' });
   }
 
   static async find(field, value) {

@@ -27,8 +27,9 @@ module.exports.meals = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  console.table(req.user);
+  // console.table(req.user);
+  console.log(req.params.id);
 
-  let meals = await Meal.find(false, req.params.id);
+  let meals = await Meal.find(null, req.params.id);
   return res.status(200).json(meals);
 };

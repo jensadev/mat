@@ -22,18 +22,22 @@ module.exports.show = async (req, res) => {
 
 module.exports.store = async (req, res) => {
   const errors = validationResult(req);
-  console.table(req.body)
   if (!errors.isEmpty()) {
     console.table(errors.array())
     return res.status(400).json({ errors: errors.array() });
   }
 
-  let meal = new Meal(null, req.body.dish_id, req.body.type_id, req.body.date || false);
-  const result = await meal.save();
-  if (result) {
-    return res.send(meal);
+  try {
+    let meal = new Meal(null, req.body.dish_id, req.body.type_id, req.user.id, null, null, req.body.date || null);
+    const result = await meal.save();
+    if (result) {
+      return res.send(result);
+    }
+    return res.status(400).json({ errors: 'Invalid request' });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({ errors: 'Invalid request' });
   }
-  return res.status(400).json({ errors: 'Invalid request' });
 };
 
 module.exports.update = async (req, res) => {
