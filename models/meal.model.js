@@ -9,7 +9,8 @@ class Meal {
     this.dishId = dish_id;
     this.typeId = type_id;
     this.userId = user_id;
-    this.date = date ? date : new Date().toISOString().split('T')[0];
+    this.date = date ? new Date(date).toISOString().slice(0, 19).replace('T', ' ') : new Date().toISOString().slice(0, 19).replace('T', ' ');
+    console.log(this.date)
     this.id = id;
   }
 

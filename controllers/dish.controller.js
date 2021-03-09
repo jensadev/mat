@@ -1,10 +1,10 @@
-const Dish = require('../models/dish.model');
-const { validationResult  } = require('express-validator');
+// const Dish = require('../models/dish.model');
+// const { validationResult  } = require('express-validator');
 
-module.exports.index = async (req, res) => {
-  const result = 'all dishes';
-  return res.json({result})
-};
+// module.exports.index = async (req, res) => {
+//   const result = 'all dishes';
+//   return res.json({result})
+// };
 
 // module.exports.show = async (req, res) => {
 //   const errors = validationResult(req);

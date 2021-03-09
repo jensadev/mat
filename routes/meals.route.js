@@ -11,7 +11,7 @@ router
     body('dish').trim().escape().optional({nullable: true}),
     body('dish_id').isInt().optional({nullable: true}),
     body('type_id').isInt(),
-    body('date').isDate({format: 'YYYY-MM-DD'} ).optional({nullable: true}),
+    body('date').isISO8601( ).optional({nullable: true}),
     verify,
     controller.store);
 router
@@ -23,7 +23,7 @@ router
     param('id').isInt(),
     body('dish_id').isInt().optional({nullable: true}),
     body('type_id').isInt().optional({nullable: true}),
-    body('date').isDate().optional({nullable: true}),
+    body('date').isISO8601( ).optional({nullable: true}),
     verify,
     controller.update)
   .delete(

@@ -99,7 +99,7 @@ describe('api/meals', async () => {
       .send({
         dish_id: dish.id,
         type_id: 3,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString()
       })
       .expect(200)
       .end((err, res) => {
@@ -116,7 +116,7 @@ describe('api/meals', async () => {
       .send({
         dish: 'Broccolisoppa',
         type_id: 3,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString()
       })
       .expect(200)
       .end((err, res) => {
@@ -158,7 +158,7 @@ describe('api/meals', async () => {
       .send({
         dish_id: dish[0].id,
         type_id: 3,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString()
       })
       .expect(200);
       expect(res.body).to.have.property('dishId', dish[0].id);

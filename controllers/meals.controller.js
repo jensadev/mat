@@ -39,7 +39,14 @@ module.exports.store = async (req, res) => {
   }
 
   try {
-    let meal = new Meal(null, req.body.dish_id == 'undefined' ? req.body.dish_id : dish.id, req.body.type_id, req.user.id, null, null, req.body.date || null);
+    let meal = new Meal(
+      null,
+      typeof req.body.dish_id == 'number' ? req.body.dish_id : dish.id,
+      req.body.type_id,
+      req.user.id,
+      null,
+      null,
+      req.body.date || null);
     const result = await meal.save();
     if (result) {
       return res.send(result);
