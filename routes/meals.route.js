@@ -8,9 +8,10 @@ router
   .route('/')
   .get(controller.index)
   .post(
-    body('dish_id').isInt(),
+    body('dish').trim().escape().optional({nullable: true}),
+    body('dish_id').isInt().optional({nullable: true}),
     body('type_id').isInt(),
-    body('date').isDate().optional({nullable: true}),
+    body('date').isDate({format: 'YYYY-MM-DD'} ).optional({nullable: true}),
     verify,
     controller.store);
 router

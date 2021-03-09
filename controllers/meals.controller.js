@@ -1,4 +1,5 @@
 const Meal = require('../models/meal.model');
+const Dish = require('../models/dish.model');
 const { validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
@@ -26,9 +27,19 @@ module.exports.store = async (req, res) => {
     console.table(errors.array())
     return res.status(400).json({ errors: errors.array() });
   }
+  let dish;
+
+  if (!req.body.dish_id) {
+    dish = await Dish.find(req.body.dish);
+    dish = dish[0];
+    if (!dish) {
+      dish = new Dish(null, req.body.dish);
+      dish = await dish.save();
+    }
+  }
 
   try {
-    let meal = new Meal(null, req.body.dish_id, req.body.type_id, req.user.id, null, null, req.body.date || null);
+    let meal = new Meal(null, req.body.dish_id == 'undefined' ? req.body.dish_id : dish.id, req.body.type_id, req.user.id, null, null, req.body.date || null);
     const result = await meal.save();
     if (result) {
       return res.send(result);

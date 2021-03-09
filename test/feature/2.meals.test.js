@@ -109,6 +109,23 @@ describe('api/meals', async () => {
       });
     });
 
+    it('should create a meal and a dish', (done) => {
+      request(app)
+      .post('/api/meals')
+      .set('Authorization', 'Bearer ' + token)
+      .send({
+        dish: 'Broccolisoppa',
+        type_id: 3,
+        date: new Date().toISOString().split('T')[0]
+      })
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err);
+        expect(res.body).to.have.property('id');
+        return done();  
+      });
+    });
+
     it('should return 400 when request body is invalid', (done) => {
       request(app)
       .post('/api/meals')

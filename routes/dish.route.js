@@ -1,11 +1,20 @@
 const express = require('express');
 const Dish = require('../models/dish.model');
 const router = express.Router();
+const { body, query, validationResult } = require('express-validator');
+const { verify } = require('../middlewares/verify');
 
 router
   .route('/')
-  .get(async (req, res, next) => {
-    console.log(req.query.search)
+  .get(
+    query('search').trim().escape(),
+    async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.table(errors.array())
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
     try {
       const result = await Dish.find(req.query.search);
       if (result) {
@@ -17,7 +26,19 @@ router
       console.error(err);
       next(err);
     }
-});
+})
+.post(
+  body('name').trim().escape(),
+  verify,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.table(errors.array())
+      return res.status(400).json({ errors: errors.array() });
+    }
+    console.log(req.body);
+  });
+
 
 router
   .route('/:search')

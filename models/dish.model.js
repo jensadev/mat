@@ -18,7 +18,7 @@ class Dish {
       result = await query(sql, [id]);
     } else if (isNaN(id)) {
       const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
-      result = await query(sql, [param + '%']);
+      result = await query(sql, ['%' + param + '%']);
     }
     if (result.length > 0) {
       const dishes = [];

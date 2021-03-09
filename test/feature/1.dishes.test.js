@@ -21,7 +21,7 @@ describe('Dish feature', () => {
 
     it('should return all matching dishes', async () => {
       let dishes = await Dish.find('korv');
-      expect(dishes.length).to.equal(2);
+      expect(dishes.length).to.equal(3);
     });
 
     it('should return matching dish', async () => {

@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 exports.verify = (req, res, next) => {
-  // console.log(req.headers.authorization)
   const token = req.headers.authorization;
+
+  // console.table(token)
+  // console.table(req.body)
+
   if (!token) {
     res.status(401).json({error: "please provide a token"});
   } else {
