@@ -72,7 +72,7 @@ module.exports.update = async (req, res) => {
 
   meal.dishId = req.body.dish_id || meal.dishId;
   meal.typeId = req.body.type_id || meal.typeId;
-  meal.date = req.body.date || meal.date;
+  meal.date = new Date(req.body.date).toISOString().split('T')[0] || meal.date;
 
   const result = await meal.save();
   if (result) {

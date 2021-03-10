@@ -9,7 +9,7 @@ class Meal {
     this.dishId = dish_id;
     this.typeId = type_id;
     this.userId = user_id;
-    this.date = date ? new Date(date).toISOString().slice(0, 19).replace('T', ' ') : new Date().toISOString().slice(0, 19).replace('T', ' ');
+    this.date = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
     console.log(this.date)
     this.id = id;
   }
@@ -24,7 +24,8 @@ class Meal {
       this.type = null;
       if (result.affectedRows) return this;
     } else {
-      const sql = `INSERT INTO meals (dish_id, type_id, user_id, date, created_at, updated_at)
+      const sql = `INSERT INTO meals
+        (dish_id, type_id, user_id, date, created_at, updated_at)
         VALUES ( ?, ?, ?, ?, now(), now() )`;
       const result = await query(sql, [this.dishId, this.typeId, this.userId, this.date]);
       if (result.insertId) {
@@ -46,7 +47,15 @@ class Meal {
         LIMIT 1`;
       const result = await query(sql, id);
       if(result[0]) {
-        const meal = new Meal(result[0].id, result[0].dish_id, result[0].type_id, result[0].user_id, result[0].dish, result[0].type, result[0].date);
+        const meal = new Meal(
+          result[0].id,
+          result[0].dish_id,
+          result[0].type_id,
+          result[0].user_id,
+          result[0].dish,
+          result[0].type,
+          result[0].date
+        );
         return meal;  
       }
       return false;
@@ -60,7 +69,7 @@ class Meal {
         JOIN mealtypes
         ON meals.type_id = mealtypes.id
         WHERE meals.user_id = ?
-        ORDER BY date DESC`;
+        ORDER BY date DESC, id DESC`;
         result = await query(sql, [user]);
       } else {
         const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
@@ -69,12 +78,22 @@ class Meal {
         ON meals.dish_id = dishes.id
         JOIN mealtypes
         ON meals.type_id = mealtypes.id
-        ORDER BY date DESC`;
+        ORDER BY date DESC, id DESC`;
         result = await query(sql);
       }
       const meals = [];
       result.forEach((element) => {
-        meals.push(new Meal(element.id, element.dish_id, element.type_id, element.user_id, element.dish, element.type, element.date));
+        meals.push(
+          new Meal(
+            element.id,
+            element.dish_id,
+            element.type_id,
+            element.user_id,
+            element.dish,
+            element.type,
+            element.date
+          )
+        );
       });
       return meals;
     }
