@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { query } = require("./db.model");
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
+const Meal = require('./meal.model');
 
 class User {
   constructor(id, email, password) {
@@ -29,19 +30,12 @@ class User {
     }
   }
 
-  generateToken() {
-    // eslint-disable-next-line no-undef
-    return jwt.sign({ data: {id: this.id, name: this.name, email: this.email} }, process.env.SECRET, { expiresIn: '24h' });
+  static async meals(userId) {
+    return await Meal.find(null, userId);
   }
 
-  generateUserName() {
-    let adj = this.getRandomInt(0, adjektiv.length);
-    let sub = this.getRandomInt(0, substantiv.length);
-    return (
-      this.capitalizeFirstLetter(adjektiv[adj]) + 
-      this.capitalizeFirstLetter(substantiv[sub]) + 
-      this.clamp(adj+sub, 0, 5000)
-      )
+  static async dishes(userId) {
+
   }
 
   static async find(field, value) {
@@ -67,6 +61,21 @@ class User {
         console.error(e);
       }
     }
+  }
+
+  generateToken() {
+    // eslint-disable-next-line no-undef
+    return jwt.sign({ data: {id: this.id, name: this.name, email: this.email} }, process.env.SECRET, { expiresIn: '24h' });
+  }
+
+  generateUserName() {
+    let adj = this.getRandomInt(0, adjektiv.length);
+    let sub = this.getRandomInt(0, substantiv.length);
+    return (
+      this.capitalizeFirstLetter(adjektiv[adj]) + 
+      this.capitalizeFirstLetter(substantiv[sub]) + 
+      this.clamp(adj+sub, 0, 5000)
+      )
   }
 
   getRandomInt(min, max) {

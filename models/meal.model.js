@@ -10,7 +10,6 @@ class Meal {
     this.typeId = type_id;
     this.userId = user_id;
     this.date = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-    console.log(this.date)
     this.id = id;
   }
 
@@ -36,6 +35,7 @@ class Meal {
   }
 
   static async find(id = null, user = null) {
+    let result;
     if (id) {
       const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
@@ -45,22 +45,19 @@ class Meal {
         ON meals.type_id = mealtypes.id
         WHERE meals.id = ?
         LIMIT 1`;
-      const result = await query(sql, id);
-      if(result[0]) {
-        const meal = new Meal(
-          result[0].id,
-          result[0].dish_id,
-          result[0].type_id,
-          result[0].user_id,
-          result[0].dish,
-          result[0].type,
-          result[0].date
-        );
-        return meal;  
-      }
-      return false;
+      result = await query(sql, id);
+      // if(result[0]) {
+      //   const meal = new Meal(
+      //     result[0].id,
+      //     result[0].dish_id,
+      //     result[0].type_id,
+      //     result[0].user_id,
+      //     result[0].dish,
+      //     result[0].type,
+      //     result[0].date
+      //   );
+      //   return meal;  
     } else {
-      let result;
       if (user) {
         const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
         FROM meals 
@@ -81,6 +78,8 @@ class Meal {
         ORDER BY date DESC, id DESC`;
         result = await query(sql);
       }
+    }
+    if (result.length > 0) {
       const meals = [];
       result.forEach((element) => {
         meals.push(
@@ -97,6 +96,7 @@ class Meal {
       });
       return meals;
     }
+    return false;
   }
 
   static async delete(id) {

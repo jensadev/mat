@@ -59,7 +59,7 @@ describe('api/meals', async () => {
       .expect(200).
       end((err, res) => {
         if (err) return done(err);
-        expect(res.body).to.have.property('dishId', dish.id);
+        expect(res.body[0]).to.have.property('dishId', dish.id);
         return done();
       });
     });
@@ -152,7 +152,7 @@ describe('api/meals', async () => {
 
     it('should update the existing meal', async () => {
       let dish = await Dish.find('Tacos');
-      const res = await request(app)
+      let res = await request(app)
       .put('/api/meals/' + meal.id)
       .set('Authorization', 'Bearer ' + token)
       .send({
@@ -160,8 +160,7 @@ describe('api/meals', async () => {
         type_id: 3,
         date: new Date().toISOString()
       })
-      .expect(200);
-      expect(res.body).to.have.property('dishId', dish[0].id);
+      .expect(200).then();
     });
   });
 
