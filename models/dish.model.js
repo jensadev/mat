@@ -7,12 +7,20 @@ class Dish {
     this.id = id ? id : null;
   }
 
-  static async find(param = null) {
+  static async find(param = null, user = null) {
     const id = parseInt(param);
     let result;
     if (param === null) {
-      const sql = 'SELECT * FROM dishes';
-      result = await query(sql);
+      if (user) {
+        const sql = `SELECT user_has_dish.id as id, dishes.name AS name
+          FROM user_has_dish
+          JOIN dishes ON user_has_dish.dish_id = dishes.id
+          WHERE user_has_dish.user_id = ?;`;
+        result = await query(sql, user);
+      } else {
+        const sql = 'SELECT * FROM dishes';
+        result = await query(sql);
+      }
     } else if (!isNaN(id)) {
       const sql = 'SELECT * FROM dishes WHERE id = ?';
       result = await query(sql, [id]);
@@ -27,7 +35,7 @@ class Dish {
       });
       return dishes;  
     }
-    return false;
+    return 'No dishes found';
   }
 
   async save() {

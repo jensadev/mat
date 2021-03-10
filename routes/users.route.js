@@ -11,4 +11,11 @@ router
     verify,
     userController.meals);
 
+router
+  .route('/:id/dishes')
+  .get(
+    param('id').isInt(),
+    verify,
+    userController.dishes);
+
 module.exports = router;

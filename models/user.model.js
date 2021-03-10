@@ -3,6 +3,7 @@ const { query } = require("./db.model");
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
 const Meal = require('./meal.model');
+const Dish = require('./dish.model');
 
 class User {
   constructor(id, email, password) {
@@ -35,7 +36,7 @@ class User {
   }
 
   static async dishes(userId) {
-
+    return await Dish.find(null, userId);
   }
 
   static async find(field, value) {

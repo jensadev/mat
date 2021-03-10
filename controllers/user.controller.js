@@ -1,5 +1,4 @@
 const User = require('../models/user.model');
-const Meal = require('../models/meal.model');
 const { validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
@@ -27,9 +26,16 @@ module.exports.meals = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  // console.table(req.user);
-  // console.log(req.params.id);
-
-  let meals = await Meal.find(null, req.params.id);
+  const meals = await User.meals(req.params.id);
   return res.status(200).json(meals);
+};
+
+module.exports.dishes = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const dishes = await User.dishes(req.params.id);
+  return res.status(200).json(dishes);
 };

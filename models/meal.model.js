@@ -46,17 +46,6 @@ class Meal {
         WHERE meals.id = ?
         LIMIT 1`;
       result = await query(sql, id);
-      // if(result[0]) {
-      //   const meal = new Meal(
-      //     result[0].id,
-      //     result[0].dish_id,
-      //     result[0].type_id,
-      //     result[0].user_id,
-      //     result[0].dish,
-      //     result[0].type,
-      //     result[0].date
-      //   );
-      //   return meal;  
     } else {
       if (user) {
         const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type
@@ -96,7 +85,7 @@ class Meal {
       });
       return meals;
     }
-    return false;
+    return 'No meals found';
   }
 
   static async delete(id) {
