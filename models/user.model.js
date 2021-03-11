@@ -35,8 +35,8 @@ class User {
     return await Meal.find(null, userId);
   }
 
-  static async dishes(userId) {
-    return await Dish.find(null, userId);
+  static async dishes(param = null, userId) {
+    return await Dish.find(param, userId);
   }
 
   static async find(field, value) {

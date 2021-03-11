@@ -3,7 +3,9 @@ const { query } = require('./db.model');
 
 class Meal {
   constructor(id, dish_id, type_id, user_id, dish = null, type = null, date = null) {
-    if (!dish_id || !type_id || !user_id ) throw new Error('Property required');
+    if (!dish_id || !type_id || !user_id ) {
+      throw new Error(`Property required: ${dish_id}, ${type_id}, ${user_id}`);
+    }
     this.dish = dish;
     this.type = type;
     this.dishId = dish_id;

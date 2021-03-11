@@ -36,6 +36,6 @@ module.exports.dishes = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const dishes = await User.dishes(req.params.id);
+  const dishes = await User.dishes(typeof req.query.search != 'undefined' ? req.query.search : null , req.params.id);
   return res.status(200).json(dishes);
 };

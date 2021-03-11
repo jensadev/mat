@@ -16,6 +16,9 @@ class Dish {
           FROM user_has_dish
           JOIN dishes ON user_has_dish.dish_id = dishes.id
           WHERE user_has_dish.user_id = ?;`;
+
+          //          ORDER BY user_has_dish.created_at DESC
+          // LIMIT 20
         result = await query(sql, user);
       } else {
         const sql = 'SELECT * FROM dishes';
@@ -25,8 +28,17 @@ class Dish {
       const sql = 'SELECT * FROM dishes WHERE id = ?';
       result = await query(sql, [id]);
     } else if (isNaN(id)) {
-      const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
-      result = await query(sql, ['%' + param + '%']);
+      if (user) {
+        const sql = `SELECT user_has_dish.id as id, dishes.name AS name
+          FROM user_has_dish
+          JOIN dishes ON user_has_dish.dish_id = dishes.id
+          WHERE user_has_dish.user_id = ?
+          AND name LIKE ?;`;
+        result = await query(sql, [user, '%' + param + '%']);
+      } else {
+        const sql = 'SELECT * FROM dishes WHERE name LIKE ?';
+        result = await query(sql, ['%' + param + '%']);  
+      }
     }
     if (result.length > 0) {
       const dishes = [];
@@ -35,20 +47,26 @@ class Dish {
       });
       return dishes;  
     }
-    return 'No dishes found';
+    return false;
   }
 
-  async save() {
+  async save(user = null) {
     if (this.id) {
       const sql = 'UPDATE dishes SET name = ?, updated at = now() where id = ?';
       const result = await query(sql, [this.name, this.id]);
       console.table(result)
       return this;
     } else {
-      const sql = `INSERT INTO dishes (name, created_at, updated_at) 
+      let sql = `INSERT INTO dishes (name, created_at, updated_at) 
         VALUES ( ?, now(), now() )`;
-      const result = await query(sql, [this.name]);
+      let result = await query(sql, [this.name]);
+      console.table(result);
       this.id = result.insertId;
+      sql = `INSERT INTO user_has_dish
+        (dish_id, user_id, created_at, updated_at)
+        VALUES (?, ?, now(), now())`;
+      result = await query(sql, [this.id, user]);
+      console.table(result);
       return this;
     }
   }

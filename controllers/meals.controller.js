@@ -34,10 +34,10 @@ module.exports.store = async (req, res) => {
     dish = dish[0];
     if (!dish) {
       dish = new Dish(null, req.body.dish);
-      dish = await dish.save();
+      dish = await dish.save(req.user.id);
     }
   }
-
+  console.table(dish)
   try {
     let meal = new Meal(
       null,
