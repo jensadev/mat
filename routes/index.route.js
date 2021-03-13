@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { verify } = require('../middlewares/verify');
+const { checkJwt } = require('../middlewares/checkJwt');
 
 
 
@@ -10,8 +11,10 @@ router.get('/jwt-test', verify, async (req, res) => {
   res.status(200).json(req.user);
 });
 
-// router.get('/', (req, res, next) => {
-
-// });
+router.get("/api/external", checkJwt, (req, res) => {
+  res.send({
+    msg: "BY SATAN IT WORKS!",
+  });
+});
 
 module.exports = router;

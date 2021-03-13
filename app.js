@@ -10,13 +10,13 @@ require('dotenv').config({path: './.env'});
 
 const indexRouter = require('./routes/index.route');
 const mealsRouter = require('./routes/meals.route');
-const authRouter = require('./routes/auth.route');
+// const authRouter = require('./routes/auth.route');
 const dishRouter = require('./routes/dish.route');
 const usersRouter = require('./routes/users.route');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.APP_ORIGIN }));
 app.use(helmet());
 app.use(compression());
 app.use(logger('dev'));
@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/meals', mealsRouter);
-app.use('/api/auth', authRouter);
+// app.use('/api/auth', authRouter);
 app.use('/api/dish', dishRouter);
 app.use('/api/users', usersRouter);
 app.use('/', indexRouter);
