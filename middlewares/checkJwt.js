@@ -10,5 +10,5 @@ exports.checkJwt = jwt({
   }),
   audience: process.env.AUDIENCE,
   issuer: `https://${process.env.AUTH0_DOMAIN}/`,
-  algorithms: ["RS256"],
+  algorithms: ["RS256"]
 });

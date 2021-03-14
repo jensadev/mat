@@ -5,9 +5,8 @@ const Meal = require('./meal.model');
 const Dish = require('./dish.model');
 
 class User {
-  constructor(id, sub, email) {
+  constructor(id, sub) {
     this.name = this.generateUserName();
-    this.email = email;
     this.sub = sub;
     this.id = typeof id === "undefined" ? null : id;
   }
@@ -16,9 +15,9 @@ class User {
     if (this.id === null) {
       try {
         const sql = `INSERT INTO users 
-        (name, email, sub, created_at, updated_at)
-        VALUES (?, ?, ?, now(), now())`;
-        const result = await query(sql, [this.name, this.email, this.sub]);
+        (name, sub, created_at, updated_at)
+        VALUES (?, ?, now(), now())`;
+        const result = await query(sql, [this.name, this.sub]);
         this.id = result.insertId;
         return this.id;
       } catch (e) {
@@ -38,11 +37,15 @@ class User {
   }
 
   static async find(field, value) {
+
+    console.log(field,value)
+
     if (field) {
       try {
         const sql = "SELECT * FROM users WHERE ?? = ?";
         const result = await query(sql, [field, value]);
-        const user = new User(result[0].id, result[0].email, result[0].sub);
+        console.table(result)
+        const user = new User(result[0].id, result[0].sub);
         return user;
       } catch (e) {
         console.error(e);

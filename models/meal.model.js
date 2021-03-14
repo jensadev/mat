@@ -87,7 +87,7 @@ class Meal {
       });
       return meals;
     }
-    return 'No meals found';
+    return false;
   }
 
   static async delete(id) {

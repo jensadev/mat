@@ -26,8 +26,26 @@ module.exports.meals = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const meals = await User.meals(req.params.id);
+  console.table(req.user.sub);
+  const sub = String(req.user.sub).split('|')[1]
+
+try {
+  let user = await User.find('sub', sub);
+
+  if(!user) {
+    user = new User(null, sub);
+    user = await user.save();
+  }
+
+  console.log(user.id)
+
+  const meals = await User.meals(user.id);
   return res.status(200).json(meals);
+
+} catch (err) {
+  console.error(err);
+  return res.status(500);
+}
 };
 
 module.exports.dishes = async (req, res) => {
@@ -39,7 +57,3 @@ module.exports.dishes = async (req, res) => {
   const dishes = await User.dishes(typeof req.query.search != 'undefined' ? req.query.search : null , req.params.id);
   return res.status(200).json(dishes);
 };
-
-module.exports.store = async (req, res) => {
-
-} 

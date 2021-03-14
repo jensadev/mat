@@ -5,14 +5,13 @@ const userController = require('../controllers/user.controller');
 const { checkJwt } = require('../middlewares/checkJwt');
 
 router
-  .route('/:id/meals')
+  .route('/meals')
   .get(
-    param('id').isInt(),
     checkJwt,
     userController.meals);
 
 router
-  .route('/:id/dishes')
+  .route('/dishes')
   .get(
     param('id').isInt(),
     query('search').trim().escape().optional({nullable: true}),
