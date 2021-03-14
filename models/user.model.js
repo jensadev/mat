@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { query } = require("./db.model");
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
@@ -6,21 +5,20 @@ const Meal = require('./meal.model');
 const Dish = require('./dish.model');
 
 class User {
-  constructor(id, email, password) {
+  constructor(id, sub, email) {
     this.name = this.generateUserName();
     this.email = email;
-    this.password = password;
+    this.sub = sub;
     this.id = typeof id === "undefined" ? null : id;
-    // console.table(this);
   }
 
   async save() {
     if (this.id === null) {
       try {
         const sql = `INSERT INTO users 
-        (name, email, password, created_at, updated_at)
+        (name, email, sub, created_at, updated_at)
         VALUES (?, ?, ?, now(), now())`;
-        const result = await query(sql, [this.name, this.email, this.password]);
+        const result = await query(sql, [this.name, this.email, this.sub]);
         this.id = result.insertId;
         return this.id;
       } catch (e) {
@@ -44,30 +42,30 @@ class User {
       try {
         const sql = "SELECT * FROM users WHERE ?? = ?";
         const result = await query(sql, [field, value]);
-        const user = new User(result[0].id, result[0].email, result[0].password);
+        const user = new User(result[0].id, result[0].email, result[0].sub);
         return user;
       } catch (e) {
         console.error(e);
       }
-    } else {
-      try {
-        const sql = "SELECT * FROM users";
-        const result = await query(sql);
-        const users = [];
-        result.forEach((element) => {
-          users.push(new User(...element));
-        });
-        return users;
-      } catch (e) {
-        console.error(e);
-      }
+    // } else {
+    //   try {
+    //     const sql = "SELECT * FROM users";
+    //     const result = await query(sql);
+    //     const users = [];
+    //     result.forEach((element) => {
+    //       users.push(new User(...element));
+    //     });
+    //     return users;
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
     }
   }
 
-  generateToken() {
-    // eslint-disable-next-line no-undef
-    return jwt.sign({ data: {id: this.id, name: this.name, email: this.email} }, process.env.SECRET, { expiresIn: '24h' });
-  }
+  // generateToken() {
+  //   // eslint-disable-next-line no-undef
+  //   return jwt.sign({ data: {id: this.id, name: this.name, email: this.email} }, process.env.SECRET, { expiresIn: '24h' });
+  // }
 
   generateUserName() {
     let adj = this.getRandomInt(0, adjektiv.length);

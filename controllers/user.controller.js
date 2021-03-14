@@ -39,3 +39,7 @@ module.exports.dishes = async (req, res) => {
   const dishes = await User.dishes(typeof req.query.search != 'undefined' ? req.query.search : null , req.params.id);
   return res.status(200).json(dishes);
 };
+
+module.exports.store = async (req, res) => {
+
+} 

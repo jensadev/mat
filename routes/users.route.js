@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { param, query } = require('express-validator');
 const userController = require('../controllers/user.controller');
-const { verify } = require('../middlewares/verify');
+const { checkJwt } = require('../middlewares/checkJwt');
 
 router
   .route('/:id/meals')
   .get(
     param('id').isInt(),
-    verify,
+    checkJwt,
     userController.meals);
 
 router
@@ -16,7 +16,7 @@ router
   .get(
     param('id').isInt(),
     query('search').trim().escape().optional({nullable: true}),
-    verify,
+    checkJwt,
     userController.dishes);
 
 module.exports = router;
