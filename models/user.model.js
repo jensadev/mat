@@ -20,11 +20,45 @@ class User {
         const result = await query(sql, [this.name, this.sub]);
         this.id = result.insertId;
         return this.id;
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err.errno);
+        return false;
       }
     } else {
       // updated existing
+    }
+  }
+
+  async hasDish(dishId) {
+
+//     INSERT INTO
+//     user_has_dish (dish_id, user_id, created_at, updated_at)
+// SELECT
+//     7,
+//     7,
+//     now(),
+//     now()
+// WHERE
+//     NOT EXISTS (
+//         SELECT
+//             dish_id,
+//             user_id
+//         FROM
+//             user_has_dish
+//         WHERE
+//             dish_id = 7
+//             AND user_id = 7
+//     )
+
+    const sql = `INSERT INTO user_has_dish
+    (dish_id, user_id, created_at, updated_at)
+    VALUES (?, ?, now(), now())`;
+    const result = await query(sql, [dishId, this.id]);
+    console.table(result);
+    if (result.insertId) {
+      return result.insertId;
+    } else {
+      return false;
     }
   }
 
@@ -36,10 +70,12 @@ class User {
     return await Dish.find(param, userId);
   }
 
+  static getSub(sub) {
+    return String(sub).split('|')[1];
+  }
+
   static async find(field, value) {
-
-    console.log(field,value)
-
+    // console.log(field,value)
     if (field) {
       try {
         const sql = "SELECT * FROM users WHERE ?? = ?";

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { verify } = require('../middlewares/verify');
 const { checkJwt } = require('../middlewares/checkJwt');
 
 

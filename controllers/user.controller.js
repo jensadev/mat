@@ -1,5 +1,5 @@
 const User = require('../models/user.model');
-const { validationResult  } = require('express-validator');
+// const { validationResult  } = require('express-validator');
 
 module.exports.index = async (req, res) => {
   let users = await User.find();
@@ -21,13 +21,8 @@ module.exports.show = async (req, res) => {
 };
 
 module.exports.meals = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   console.table(req.user.sub);
-  const sub = String(req.user.sub).split('|')[1]
+  const sub = User.getSub(req.user.sub);
 
   try {
     let user = await User.find('sub', sub);
@@ -35,6 +30,7 @@ module.exports.meals = async (req, res) => {
     if(!user) {
       user = new User(null, sub);
       user = await user.save();
+      console.log('user.meals ! ' + user);
     }
 
     console.log(user.id)
@@ -49,12 +45,8 @@ module.exports.meals = async (req, res) => {
 };
 
 module.exports.dishes = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
   console.table(req.user.sub);
-  const sub = String(req.user.sub).split('|')[1]
+  const sub = User.getSub(req.user.sub);
   try {
     let user = await User.find('sub', sub);
 
@@ -63,7 +55,7 @@ module.exports.dishes = async (req, res) => {
       user = await user.save();
     }
 
-    const dishes = await User.dishes(user.id);
+    const dishes = await User.dishes(null, user.id);
     return res.status(200).json(dishes);
 
   } catch (err) {
