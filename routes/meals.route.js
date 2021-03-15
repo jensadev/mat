@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/meals.controller');
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { checkJwt } = require('../middlewares/checkJwt');
 
 router
@@ -13,8 +13,12 @@ router
     body('date').isISO8601( ).optional({nullable: true}),
     checkJwt,
     controller.store);
-// router
-//   .route('/:id')
+router
+  .route('/:id')
+  .delete(
+    param('id').isInt(),
+    controller.destroy
+  );
 //   .get(
 //     param('id').isInt(),
 //     controller.show)

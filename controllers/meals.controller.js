@@ -109,10 +109,14 @@ module.exports.store = async (req, res) => {
 //   return res.status(400).json({ errors: 'Invalid request' });  
 // };
 
-// module.exports.destroy = async (req, res) => {
-//   const result = await Meal.delete(req.params.id);
-//   if (result == 0) {
-//     return res.status(400).json({ errors: 'Invalid request' });
-//   }
-//   return res.send('Meal deleted');
-// };
+module.exports.destroy = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const result = await Meal.delete(req.params.id);
+  if (result == 0) {
+    return res.status(400).json({ errors: 'Invalid request' });
+  }
+  return res.send('Meal deleted');
+};
