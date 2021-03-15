@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 // const { validationResult  } = require('express-validator');
+const paginate = require('jw-paginate');
 
 module.exports.index = async (req, res) => {
   let users = await User.find();
@@ -30,13 +31,16 @@ module.exports.meals = async (req, res) => {
       user = new User(null, sub);
       user = await user.save();
     }
-
-    // const page = parseInt(req.query.page) || 1;
-    // const pageSize = 10;
-    // const pager = paginate(items.length, page, pageSize);
     const meals = await User.meals(user.id);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 2;
+    const pager = paginate(meals.length, page, pageSize);
+    const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
 
-    return res.status(200).json(meals);
+    console.table(pager);
+    console.table(pageOfItems);
+
+    return res.status(200).json({page, pageOfItems});
 
   } catch (err) {
     console.error(err);
