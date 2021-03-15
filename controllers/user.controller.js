@@ -31,7 +31,11 @@ module.exports.meals = async (req, res) => {
       user = await user.save();
     }
 
+    // const page = parseInt(req.query.page) || 1;
+    // const pageSize = 10;
+    // const pager = paginate(items.length, page, pageSize);
     const meals = await User.meals(user.id);
+
     return res.status(200).json(meals);
 
   } catch (err) {

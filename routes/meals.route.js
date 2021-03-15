@@ -17,6 +17,7 @@ router
   .route('/:id')
   .delete(
     param('id').isInt(),
+    checkJwt,
     controller.destroy
   );
 //   .get(

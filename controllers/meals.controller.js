@@ -118,5 +118,5 @@ module.exports.destroy = async (req, res) => {
   if (result == 0) {
     return res.status(400).json({ errors: 'Invalid request' });
   }
-  return res.send('Meal deleted');
+  return res.status(200).json({msg: `Resource with id ${req.params.id} deleted`});
 };
