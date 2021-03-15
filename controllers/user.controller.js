@@ -21,7 +21,6 @@ module.exports.show = async (req, res) => {
 };
 
 module.exports.meals = async (req, res) => {
-  console.table(req.user.sub);
   const sub = User.getSub(req.user.sub);
 
   try {
@@ -30,10 +29,7 @@ module.exports.meals = async (req, res) => {
     if(!user) {
       user = new User(null, sub);
       user = await user.save();
-      console.log('user.meals ! ' + user);
     }
-
-    console.log(user.id)
 
     const meals = await User.meals(user.id);
     return res.status(200).json(meals);
@@ -45,7 +41,6 @@ module.exports.meals = async (req, res) => {
 };
 
 module.exports.dishes = async (req, res) => {
-  console.table(req.user.sub);
   const sub = User.getSub(req.user.sub);
   try {
     let user = await User.find('sub', sub);

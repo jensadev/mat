@@ -38,7 +38,6 @@ module.exports.store = async (req, res) => {
     if(!user) {
       user = new User(null, sub);
       user = await user.save();
-      console.log('meal.store ! ' + user);
       if (!user) {
         user = await User.find('sub', sub);
       }
@@ -58,7 +57,6 @@ module.exports.store = async (req, res) => {
         dish = await dish.save(user.id);
       } else {
         let hasdish = await user.hasDish(dish.id);
-        console.log(hasdish);
       }
     }
   } catch (err) {
@@ -78,7 +76,6 @@ module.exports.store = async (req, res) => {
       req.body.date || null);
     const result = await meal.save();
     if (result) {
-      console.table(result)
       return res.send(result);
     }
     return res.status(400).json({ errors: 'Invalid request' });

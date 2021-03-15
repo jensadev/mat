@@ -57,7 +57,7 @@ class Meal {
         JOIN mealtypes
         ON meals.type_id = mealtypes.id
         WHERE meals.user_id = ?
-        ORDER BY date DESC, id DESC`;
+        ORDER BY date DESC, type_id DESC`;
         result = await query(sql, [user]);
       } else {
         const sql = `SELECT meals.*, dishes.name AS dish, mealtypes.name AS type

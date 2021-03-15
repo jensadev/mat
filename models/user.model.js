@@ -13,15 +13,19 @@ class User {
 
   async save() {
     if (this.id === null) {
-      try {
-        const sql = `INSERT INTO users 
-        (name, sub, created_at, updated_at)
-        VALUES (?, ?, now(), now())`;
-        const result = await query(sql, [this.name, this.sub]);
+      const sql = `INSERT INTO
+      users(name, sub, created_at, updated_at)
+      SELECT ?, ?, now(), now()
+      WHERE NOT EXISTS (
+        SELECT sub
+        FROM users
+        WHERE sub = ?)`;
+      const result = await query(sql, [this.name, this.sub, this.sub]);
+      console.table(result);
+      if (result.insertId) {
         this.id = result.insertId;
         return this.id;
-      } catch (err) {
-        console.error(err.errno);
+      } else {
         return false;
       }
     } else {
@@ -30,31 +34,16 @@ class User {
   }
 
   async hasDish(dishId) {
-
-//     INSERT INTO
-//     user_has_dish (dish_id, user_id, created_at, updated_at)
-// SELECT
-//     7,
-//     7,
-//     now(),
-//     now()
-// WHERE
-//     NOT EXISTS (
-//         SELECT
-//             dish_id,
-//             user_id
-//         FROM
-//             user_has_dish
-//         WHERE
-//             dish_id = 7
-//             AND user_id = 7
-//     )
-
-    const sql = `INSERT INTO user_has_dish
-    (dish_id, user_id, created_at, updated_at)
-    VALUES (?, ?, now(), now())`;
-    const result = await query(sql, [dishId, this.id]);
-    console.table(result);
+    const sql = `INSERT INTO
+      user_has_dish(dish_id, user_id, created_at, updated_at)
+      SELECT ?, ?, now(), now()
+      WHERE
+        NOT EXISTS (
+          SELECT dish_id, user_id
+          FROM user_has_dish
+          WHERE dish_id = ? AND user_id = ?
+        )`;
+    const result = await query(sql, [dishId, this.id, dishId, this.id]);
     if (result.insertId) {
       return result.insertId;
     } else {
@@ -77,14 +66,11 @@ class User {
   static async find(field, value) {
     // console.log(field,value)
     if (field) {
-      try {
-        const sql = "SELECT * FROM users WHERE ?? = ?";
-        const result = await query(sql, [field, value]);
-        console.table(result)
+      const sql = "SELECT * FROM users WHERE ?? = ?";
+      const result = await query(sql, [field, value]);
+      if (result) {
         const user = new User(result[0].id, result[0].sub);
         return user;
-      } catch (e) {
-        console.error(e);
       }
     // } else {
     //   try {
