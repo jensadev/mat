@@ -33,14 +33,15 @@ module.exports.meals = async (req, res) => {
     }
     const meals = await User.meals(user.id);
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 2;
+    const pageSize = 7;
     const pager = paginate(meals.length, page, pageSize);
     const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
 
-    console.table(pager);
-    console.table(pageOfItems);
+    // console.table(pager);
+    // console.table(pageOfItems);
+    // console.log(page)
 
-    return res.status(200).json({page, pageOfItems});
+    return res.status(200).json({pager, pageOfItems});
 
   } catch (err) {
     console.error(err);
