@@ -7,65 +7,92 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DROP TABLE `test_dev`.`meals`;
-CREATE TABLE `meals` (
+DROP TABLE IF EXISTS `dishes`;
+CREATE TABLE `dishes` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `type_id` bigint unsigned NOT NULL,
-  `date` date NOT NULL,
+  `type_id` bigint unsigned DEFAULT NULL,
+  `name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `created_at` timestamp NOT NULL,
+  `updated_at` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `type_id` (`type_id`),
+  CONSTRAINT `dishes_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `dishtype` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `dishtype`;
+CREATE TABLE `dishtype` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE `test_dev`.`type`;
-CREATE TABLE `type` (
+DROP TABLE IF EXISTS `meals`;
+CREATE TABLE `meals` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `dish_id` bigint unsigned NOT NULL,
+  `type_id` bigint unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
+  `date` date NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `type_id` (`type_id`),
+  KEY `dish_id` (`dish_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `meals_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `mealtypes` (`id`),
+  CONSTRAINT `meals_ibfk_3` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `meals_ibfk_4` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `mealtypes`;
+CREATE TABLE `mealtypes` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE `test_dev`.`users`;
+DROP TABLE IF EXISTS `user_has_dish`;
+CREATE TABLE `user_has_dish` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `dish_id` bigint unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`),
+  KEY `dish_id` (`dish_id`) USING BTREE,
+  KEY `user_id` (`user_id`) USING BTREE,
+  CONSTRAINT `user_has_dish_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `user_has_dish_ibfk_2` FOREIGN KEY (`dish_id`) REFERENCES `dishes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=182 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sub` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `name` (`name`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `sub` (`sub`),
+  UNIQUE KEY `sub_2` (`sub`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `meals` (`id`, `name`, `type_id`, `date`, `created_at`, `updated_at`) VALUES
-(2, 'Gramhamsgrynsgröt', 2, '2021-02-14', '2021-02-14 12:21:02', '2021-02-14 12:21:02');
-INSERT INTO `meals` (`id`, `name`, `type_id`, `date`, `created_at`, `updated_at`) VALUES
-(3, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 12:22:18', '2021-02-14 12:22:18');
-INSERT INTO `meals` (`id`, `name`, `type_id`, `date`, `created_at`, `updated_at`) VALUES
-(4, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 12:22:50', '2021-02-14 12:22:50');
-INSERT INTO `meals` (`id`, `name`, `type_id`, `date`, `created_at`, `updated_at`) VALUES
-(5, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 12:23:09', '2021-02-14 12:23:09'),
-(6, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 12:23:18', '2021-02-14 12:23:18'),
-(7, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 13:03:53', '2021-02-14 13:03:53'),
-(8, 'Grahamsgrynsgrönt', 2, '2021-02-14', '2021-02-14 13:06:17', '2021-02-14 13:06:17'),
-(9, 'Fläsk', 3, '2021-02-14', '2021-02-14 13:06:30', '2021-02-14 13:06:30'),
-(10, 'Fläsk', 3, '2021-01-22', '2021-02-14 13:07:15', '2021-02-14 13:07:15');
-
-INSERT INTO `type` (`id`, `name`) VALUES
+INSERT INTO `mealtypes` (`id`, `name`) VALUES
 (1, 'Frukost');
-INSERT INTO `type` (`id`, `name`) VALUES
+INSERT INTO `mealtypes` (`id`, `name`) VALUES
 (2, 'Lunch');
-INSERT INTO `type` (`id`, `name`) VALUES
+INSERT INTO `mealtypes` (`id`, `name`) VALUES
 (3, 'Middag');
-
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `updated_at`) VALUES
-(1, 'korv', 'e', 'e', '2021-02-13 22:46:47', '2021-02-13 22:46:47');
-
-
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
