@@ -3,22 +3,24 @@ const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
 
+const validator = require('express-validator');
+
 module.exports.meals = async (req, res) => {
   try {
     console.table(req.user.sub);
 
-    const user = await User.findOne({where: {sub: splitSub(req.user.sub)}});
+    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
     // const user = await User.findOne({ where: { id: 1 } });
-    if(!user){
-      res.status(404)
-      throw new Error('User id not valid')
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
     }
 
     const getMeals = await Meal.findAll({
       where: { userId: user.id },
       include: [
         {
-          model: Dish,
+          model: Dish
           // where: { name: 'Dish name'}
         },
         {
@@ -42,18 +44,18 @@ module.exports.dishes = async (req, res) => {
   try {
     console.table(req.user.sub);
 
-    const user = await User.findOne({where: {sub: splitSub(req.user.sub)}});
+    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
     // const user = await User.findOne({ where: { id: 1 } });
-    if(!user){
-      res.status(404)
-      throw new Error('User id not valid')
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
     }
 
     const getDishes = await User_Dish.findAll({
       where: { userId: user.id },
       include: [
         {
-          model: Dish,
+          model: Dish
           // where: { name: 'Dish name'}
         }
       ]
@@ -73,16 +75,28 @@ module.exports.dishes = async (req, res) => {
 module.exports.store = async (req, res) => {
   try {
     if (!req.user.sub) throw new Error('Sub is Required');
-    if (!req.user.email) throw new Error('Email is Required');
+    if (!req.body.email) throw new Error('Email is Required');
+    if (!validator.isEmail(req.body.email)) throw new Error('Email is Required');
+    // console.table(req.user);
+    // console.table(req.body.email);
 
-    const existingUser = await User.findByPk(req.user.sub);
-    if (existingUser) throw new Error('User aldready exists with this sub id');
-
-    const user = await User.create({
-      sub: splitSub(req.user.sub),
-      nickname: generateUserName(),
-      email: req.user.email
+    const [user, created] = await User.findOrCreate({
+      where: { sub: splitSub(req.user.sub) },
+      defaults: {
+        nickname: generateUserName(),
+        email: req.body.email
+      }
     });
+    // const existingUser = await User.findOne({
+    //   where: { sub: splitSub(req.user.sub) }
+    // });
+    // if (existingUser) throw new Error('User aldready exists with this sub id');
+
+    // const user = await User.create({
+    //   sub: splitSub(req.user.sub),
+    //   nickname: generateUserName(),
+    //   email: req.user.email
+    // });
 
     if (user) {
       res.status(201).json({ user });
@@ -116,12 +130,12 @@ function splitSub(sub) {
 }
 
 function generateUserName() {
-  let adj = this.getRandomInt(0, adjektiv.length);
-  let sub = this.getRandomInt(0, substantiv.length);
+  let adj = getRandomInt(0, adjektiv.length);
+  let sub = getRandomInt(0, substantiv.length);
   return (
-    this.capitalizeFirstLetter(adjektiv[adj]) +
-    this.capitalizeFirstLetter(substantiv[sub]) +
-    this.clamp(adj + sub, 0, 5000)
+    capitalizeFirstLetter(adjektiv[adj]) +
+    capitalizeFirstLetter(substantiv[sub]) +
+    clamp(adj + sub, 0, 5000)
   );
 }
 
