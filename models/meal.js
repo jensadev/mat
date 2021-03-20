@@ -9,9 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Meal.belongsTo(models.User);
-      Meal.belongsTo(models.Dish);
-      Meal.belongsTo(models.Mealtype);
+      Meal.belongsTo(models.User, {
+        foreignKey: 'userId'
+      });
+      Meal.belongsTo(models.Dish, {
+        foreignKey: 'dishId'
+      });
+      Meal.belongsTo(models.Mealtype, {
+        foreignKey: 'typeId'
+      });
     }
   }
   Meal.init(

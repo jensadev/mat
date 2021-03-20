@@ -9,7 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Mealtype.belongsTo(models.Meal);
+      Mealtype.hasMany(models.Meal, {
+        foreignKey: 'typeId'
+      });
     }
   }
   Mealtype.init(
@@ -18,9 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Mealtype'
-    },
-    { timestamps: false }
+      modelName: 'Mealtype',
+      timestamps: false
+    }
   );
   return Mealtype;
 };

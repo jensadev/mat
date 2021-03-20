@@ -1,11 +1,23 @@
-const { Meal } = require('../models/');
+const { Meal, User, Dish, Mealtype } = require('../models/');
 
 module.exports.index = async (req, res) => {
   try {
-    const getMeals = await Meal.findAll();
-    //       {include: [{model: User}]}
+    const getMeals = await Meal.findAll({
+      include: [
+        {
+          model: Dish,
+          // where: { name: 'Dish name'}
+        },
+        {
+          model: User
+        },
+        {
+          model: Mealtype
+        }
+      ]
+    });
 
-    console.table(getMeals);
+    // console.table(getMeals[0].dataValues);
 
     const meals = [];
     if (getMeals)

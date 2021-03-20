@@ -8,7 +8,7 @@ const cors = require('cors');
 const compression = require('compression');
 // const helmet = require('helmet')
 const { notFound, errorHandler } = require('./middleware/errorHandler');
-const sequelize = require('./dbConnection');
+const sequelize = require('sequelize');
 
 // const User = require('./models/user');
 // const Meal = require('./models/meal');

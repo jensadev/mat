@@ -10,12 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Dish.belongsToMany(models.User, { through: 'User_Dish' });
-      Dish.hasMany(models.Meal);
+      Dish.hasMany(models.Meal, {
+        foreignKey: 'dishId',
+        onDelete: 'CASCADE'
+      });
     }
   }
   Dish.init(
     {
-      name: { type: DataTypes.STRING, allowNull: false, primaryKey: true }
+      name: { type: DataTypes.STRING, allowNull: false, unique: true }
     },
     {
       sequelize,
