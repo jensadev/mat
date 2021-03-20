@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { checkJwt } = require('../middlewares/checkJwt');
+const { checkJwt } = require('../middleware/checkJwt');
 
 
 

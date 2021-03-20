@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/meals.controller');
 const { body, param } = require('express-validator');
-const { checkJwt } = require('../middlewares/checkJwt');
+const { checkJwt } = require('../middleware/checkJwt');
 
 router
   .route('/')
