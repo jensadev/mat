@@ -1,8 +1,74 @@
-const { databaseVersion } = require('../dbConnection');
-const User = require('../models/User');
+const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
 
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
+
+module.exports.meals = async (req, res) => {
+  try {
+    console.table(req.user.sub);
+
+    const user = await User.findOne({where: {sub: splitSub(req.user.sub)}});
+    // const user = await User.findOne({ where: { id: 1 } });
+    if(!user){
+      res.status(404)
+      throw new Error('User id not valid')
+    }
+
+    const getMeals = await Meal.findAll({
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          // where: { name: 'Dish name'}
+        },
+        {
+          model: Mealtype
+        }
+      ]
+    });
+
+    const meals = [];
+    if (getMeals)
+      for (let meal of getMeals) {
+        meals.push(meal.dataValues);
+      }
+    res.status(200).json({ meals });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
+
+module.exports.dishes = async (req, res) => {
+  try {
+    console.table(req.user.sub);
+
+    const user = await User.findOne({where: {sub: splitSub(req.user.sub)}});
+    // const user = await User.findOne({ where: { id: 1 } });
+    if(!user){
+      res.status(404)
+      throw new Error('User id not valid')
+    }
+
+    const getDishes = await User_Dish.findAll({
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          // where: { name: 'Dish name'}
+        }
+      ]
+    });
+
+    const dishes = [];
+    if (getDishes)
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues.Dish);
+      }
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
 
 module.exports.store = async (req, res) => {
   try {
@@ -43,6 +109,9 @@ module.exports.show = async (req, res) => {
 };
 
 function splitSub(sub) {
+  if (sub.includes('@')) {
+    return String(sub).split('@')[0];
+  }
   return String(sub).split('|')[1];
 }
 

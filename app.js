@@ -21,7 +21,7 @@ const sequelize = require('sequelize');
 // const indexRouter = require('./routes/index.route');
 // const mealsRouter = require('./routes/meals.route');
 // const dishRouter = require('./routes/dish.route');
-// const usersRouter = require('./routes/users.route');
+const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
 
 const app = express();
@@ -38,7 +38,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/api/meals', mealsRouter);
 // // app.use('/api/auth', authRouter);
 // app.use('/api/dish', dishRouter);
-// app.use('/api/users', usersRouter);
+app.use('/api/users', usersRouter);
 // app.use('/', indexRouter);
 app.use('/api/meals', mealsRouter);
 app.use(notFound);

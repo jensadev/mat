@@ -10,23 +10,19 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
-     await queryInterface.bulkInsert(
-      'Meals',
+     */
+    await queryInterface.bulkInsert(
+      'User_Dishes',
       [
         {
-          date: new Date(),
           dishId: 1,
           userId: 1,
-          typeId: 3,
           createdAt: new Date(),
           updatedAt: new Date()
         },
         {
-          date: new Date(),
           dishId: 2,
           userId: 1,
-          typeId: 2,
           createdAt: new Date(),
           updatedAt: new Date()
         }

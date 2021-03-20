@@ -19,6 +19,11 @@ module.exports = {
           name: 'Falukorv och makaroner',
           createdAt: new Date(),
           updatedAt: new Date()
+        },
+        {
+          name: 'Havregrynsgröt',
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ],
       {}

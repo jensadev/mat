@@ -1,18 +1,18 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
 // const {authByToken} = require('../middleware/auth')
-const checkJwt = require('../middleware/checkJwt');
+const { checkJwt } = require('../middleware/checkJwt');
 
-const MealsController = require('../controllers/meals')
+const MealsController = require('../controllers/meals');
 
-router.get('/', MealsController.index);
+router.get('/', checkJwt, MealsController.index);
 
 // router.get('/', M.getAllArticles)                    //Get most recent articles from users you follow
 // router.get('/feed',authByToken,ArticleController.getFeed)           //Get most recent articles globally
 // router.post('/',authByToken,ArticleController.createArticle)        //Create an article
 // router.get('/:slug',ArticleController.getSingleArticleBySlug)       //Get an article
-// router.patch('/:slug',authByToken,ArticleController.updateArticle)  //Update an article 
+// router.patch('/:slug',authByToken,ArticleController.updateArticle)  //Update an article
 // router.delete('/:slug',authByToken,ArticleController.deleteArticle) //Delete an article
 
-module.exports = router
+module.exports = router;

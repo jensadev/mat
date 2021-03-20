@@ -1,7 +1,12 @@
 const { Meal, User, Dish, Mealtype } = require('../models/');
 
+function splitSub(sub) {
+  return String(sub).split('|')[1];
+}
+
 module.exports.index = async (req, res) => {
   try {
+    console.table(req.user.sub)
     const getMeals = await Meal.findAll({
       include: [
         {
