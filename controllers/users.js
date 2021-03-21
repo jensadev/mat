@@ -1,14 +1,16 @@
-const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
-
+const { Meal, User, Dish, User_Dish } = require('../models/');
+const { validationResult  } = require('express-validator');
 const adjektiv = require('../docs/adjektiv.json');
 const substantiv = require('../docs/substantiv.json');
 const paginate = require('jw-paginate');
-const validator = require('express-validator');
 
 module.exports.meals = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(errors.array());
+    }
     const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-    // const user = await User.findOne({ where: { id: 1 } });
     if (!user) {
       res.status(404);
       throw new Error('User id not valid');
@@ -16,10 +18,13 @@ module.exports.meals = async (req, res) => {
 
     const getMeals = await Meal.findAll({
       where: { userId: user.id },
+      order: [
+        ['date', 'DESC'],
+        ['typeId', 'DESC']
+      ],
       include: [
         {
           model: Dish
-          // where: { name: 'Dish name'}
         }
       ]
     });
@@ -42,48 +47,41 @@ module.exports.meals = async (req, res) => {
 };
 
 module.exports.dishes = async (req, res) => {
-  const dishes = [
-    {id: 1, name: 'Mat'},
-    {id: 2, name: 'Fläsk'}
-  ]
-  res.status(200).json({ dishes });
-  // try {
-  //   const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-  //   // const user = await User.findOne({ where: { id: 1 } });
-  //   if (!user) {
-  //     res.status(404);
-  //     throw new Error('User id not valid');
-  //   }
+  try {
+    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
 
-  //   const getDishes = await User_Dish.findAll({
-  //     where: { userId: user.id },
-  //     include: [
-  //       {
-  //         model: Dish
-  //         // where: { name: 'Dish name'}
-  //       }
-  //     ]
-  //   });
+    const getDishes = await User_Dish.findAll({
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish
+          // where: { name: 'Dish name'}
+        }
+      ]
+    });
 
-  //   const dishes = [];
-  //   if (getDishes)
-  //     for (let dish of getDishes) {
-  //       dishes.push(dish.dataValues.Dish);
-  //     }
-  //   res.status(200).json({ dishes });
-  // } catch (e) {
-  //   res.status(422).json({ errors: { body: [e.message] } });
-  // }
+    const dishes = [];
+    if (getDishes)
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues.Dish);
+      }
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
 };
 
 module.exports.store = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(errors.array());
+    }
     if (!req.user.sub) throw new Error('Sub is Required');
-    if (!req.body.email) throw new Error('Email is Required');
-    if (!validator.isEmail(req.body.email))
-      throw new Error('Email is Required');
-    // console.table(req.user);
-    // console.table(req.body.email);
 
     const [user, created] = await User.findOrCreate({
       where: { sub: splitSub(req.user.sub) },
@@ -92,16 +90,6 @@ module.exports.store = async (req, res) => {
         email: req.body.email
       }
     });
-    // const existingUser = await User.findOne({
-    //   where: { sub: splitSub(req.user.sub) }
-    // });
-    // if (existingUser) throw new Error('User aldready exists with this sub id');
-
-    // const user = await User.create({
-    //   sub: splitSub(req.user.sub),
-    //   nickname: generateUserName(),
-    //   email: req.user.email
-    // });
 
     if (user) {
       res.status(201).json({ user });
@@ -113,19 +101,19 @@ module.exports.store = async (req, res) => {
   }
 };
 
-module.exports.show = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.user.sub);
-    if (!user) {
-      throw new Error('No such user found');
-    }
-    return res.status(200).json({ user });
-  } catch (e) {
-    return res.status(404).json({
-      errors: { body: [e.message] }
-    });
-  }
-};
+// module.exports.show = async (req, res) => {
+//   try {
+//     const user = await User.findByPk(req.user.sub);
+//     if (!user) {
+//       throw new Error('No such user found');
+//     }
+//     return res.status(200).json({ user });
+//   } catch (e) {
+//     return res.status(404).json({
+//       errors: { body: [e.message] }
+//     });
+//   }
+// };
 
 function splitSub(sub) {
   if (sub.includes('@')) {
