@@ -9,7 +9,7 @@ router.get('/', checkJwt, MealsController.index);
 router.post(
   '/',
   body('dish').trim().escape(),
-  body('type').isInt(),
+  body('typeId').isInt(),
   body('date').isISO8601(),
   checkJwt,
   MealsController.store

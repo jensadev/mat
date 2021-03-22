@@ -54,7 +54,7 @@ module.exports.store =  async (req,res) => {
           date : req.body.date,
           userId: user.id,
           dishId: dish.id,
-          typeId: req.body.type
+          typeId: req.body.typeId
       })
       
       res.status(201).json({meal})
