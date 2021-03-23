@@ -36,7 +36,7 @@ module.exports.meals = async (req, res) => {
       }
     }
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 10;
+    const pageSize = 7;
     const pager = paginate(meals.length, page, pageSize);
     const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
 
