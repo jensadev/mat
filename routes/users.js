@@ -12,4 +12,6 @@ router.post('/', body('email').isEmail(), checkJwt, UserController.store); //Sto
 router.get('/meals', query('page').isInt().optional({nullable: true}), checkJwt, UserController.meals);
 router.get('/dishes', checkJwt, UserController.dishes);
 
+router.get('/dishes/popular', checkJwt, UserController.popular);
+
 module.exports = router;

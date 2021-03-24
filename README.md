@@ -22,7 +22,6 @@ headers: {
 
 #### Users meals
 
-Remove unnecessary data from response.
 PageOfItems should be meals?
 
 ```
@@ -44,46 +43,25 @@ PageOfItems should be meals?
         {
             "id": 2,
             "date": "2021-03-20T15:36:49.000Z",
-            "createdAt": "2021-03-20T15:36:49.000Z",
-            "updatedAt": "2021-03-20T15:36:49.000Z",
-            "dishId": 1,
-            "userId": 1,
             "typeId": 3,
             "Dish": {
-                "id": 1,
-                "name": "Falukorv och makaroner",
-                "createdAt": "2021-03-20T15:36:49.000Z",
-                "updatedAt": "2021-03-20T15:36:49.000Z"
+                "name": "Falukorv och makaroner"
             }
         },
         {
             "id": 3,
             "date": "2021-03-20T15:36:49.000Z",
-            "createdAt": "2021-03-20T15:36:49.000Z",
-            "updatedAt": "2021-03-20T15:36:49.000Z",
-            "dishId": 2,
-            "userId": 1,
             "typeId": 2,
             "Dish": {
-                "id": 2,
-                "name": "Havregrynsgröt",
-                "createdAt": "2021-03-20T15:36:49.000Z",
-                "updatedAt": "2021-03-20T15:36:49.000Z"
+                "name": "Havregrynsgröt"
             }
         },
         {
             "id": 1,
             "date": "2021-03-20T11:27:29.000Z",
-            "createdAt": "2021-03-20T11:27:29.000Z",
-            "updatedAt": "2021-03-20T11:27:29.000Z",
-            "dishId": 1,
-            "userId": 1,
             "typeId": 3,
             "Dish": {
-                "id": 1,
-                "name": "Falukorv och makaroner",
-                "createdAt": "2021-03-20T15:36:49.000Z",
-                "updatedAt": "2021-03-20T15:36:49.000Z"
+                "name": "Falukorv och makaroner"
             }
         }
     ]
@@ -92,21 +70,33 @@ PageOfItems should be meals?
 
 ### Dishes
 #### Users dishes
-Remove timestamps.
 ```
 {
     "dishes": [
         {
-            "id": 1,
-            "name": "Falukorv och makaroner",
-            "createdAt": "2021-03-20T15:36:49.000Z",
-            "updatedAt": "2021-03-20T15:36:49.000Z"
+            "name": "Falukorv och makaroner"
         },
         {
-            "id": 2,
-            "name": "Havregrynsgröt",
-            "createdAt": "2021-03-20T15:36:49.000Z",
-            "updatedAt": "2021-03-20T15:36:49.000Z"
+            "name": "Havregrynsgröt"
+        }
+    ]
+}
+```
+#### Users most popular dishes
+```
+{
+    "dishes": [
+        {
+            "count": 2,
+            "Dish": {
+                "name": "Falukorv och makaroner"
+            }
+        },
+        {
+            "count": 1,
+            "Dish": {
+                "name": "Havregrynsgröt"
+            }
         }
     ]
 }
