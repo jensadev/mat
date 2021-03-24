@@ -5,7 +5,7 @@ const { checkJwt } = require('../middleware/checkJwt');
 
 const MealsController = require('../controllers/meals');
 
-router.get('/', checkJwt, MealsController.index);
+// router.get('/', checkJwt, MealsController.index);
 router.post(
   '/',
   body('dish').trim().escape(),

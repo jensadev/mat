@@ -1,8 +1,8 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult  } = require('express-validator');
-const adjektiv = require('../docs/adjektiv.json');
-const substantiv = require('../docs/substantiv.json');
 const paginate = require('jw-paginate');
+const { splitSub } = require('../utils/splitsub');
+const {generateUserName} = require('../utils/username');
 
 module.exports.meals = async (req, res) => {
   try {
@@ -115,33 +115,3 @@ module.exports.store = async (req, res) => {
 //   }
 // };
 
-function splitSub(sub) {
-  if (sub.includes('@')) {
-    return String(sub).split('@')[0];
-  }
-  return String(sub).split('|')[1];
-}
-
-function generateUserName() {
-  let adj = getRandomInt(0, adjektiv.length);
-  let sub = getRandomInt(0, substantiv.length);
-  return (
-    capitalizeFirstLetter(adjektiv[adj]) +
-    capitalizeFirstLetter(substantiv[sub]) +
-    clamp(adj + sub, 0, 5000)
-  );
-}
-
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
-
-function clamp(val, min, max) {
-  return val > max ? max : val < min ? min : val;
-}
-
-function capitalizeFirstLetter(string) {
-  return string[0].toUpperCase() + string.slice(1);
-}

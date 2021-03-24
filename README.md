@@ -1,23 +1,190 @@
-obj = {
-  name: 'name',
-  age: 12
+# API for mat
+
+CORS enabled.
+There are migrations for sequlize.
+
+## Auth0
+
+https://auth0.com/
+
+### Header
+
+```
+headers: {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${token}`
 }
+```
 
-console.group('more than log');
-console.assert(1, 'stuff');
-console.table({obj: obj});
-console.warn('Something is wrong');
-console.error('It is wrong, error!');
+## JSON returned
 
-console.groupEnd();
+### Meals
 
+#### Users meals
 
-function getSum() {
-  addNumbers();
+Remove unnecessary data from response.
+PageOfItems should be meals?
+
+```
+{
+    "pager": {
+        "totalItems": 3,
+        "currentPage": 1,
+        "pageSize": 7,
+        "totalPages": 1,
+        "startPage": 1,
+        "endPage": 1,
+        "startIndex": 0,
+        "endIndex": 2,
+        "pages": [
+            1
+        ]
+    },
+    "pageOfItems": [
+        {
+            "id": 2,
+            "date": "2021-03-20T15:36:49.000Z",
+            "createdAt": "2021-03-20T15:36:49.000Z",
+            "updatedAt": "2021-03-20T15:36:49.000Z",
+            "dishId": 1,
+            "userId": 1,
+            "typeId": 3,
+            "Dish": {
+                "id": 1,
+                "name": "Falukorv och makaroner",
+                "createdAt": "2021-03-20T15:36:49.000Z",
+                "updatedAt": "2021-03-20T15:36:49.000Z"
+            }
+        },
+        {
+            "id": 3,
+            "date": "2021-03-20T15:36:49.000Z",
+            "createdAt": "2021-03-20T15:36:49.000Z",
+            "updatedAt": "2021-03-20T15:36:49.000Z",
+            "dishId": 2,
+            "userId": 1,
+            "typeId": 2,
+            "Dish": {
+                "id": 2,
+                "name": "Havregrynsgröt",
+                "createdAt": "2021-03-20T15:36:49.000Z",
+                "updatedAt": "2021-03-20T15:36:49.000Z"
+            }
+        },
+        {
+            "id": 1,
+            "date": "2021-03-20T11:27:29.000Z",
+            "createdAt": "2021-03-20T11:27:29.000Z",
+            "updatedAt": "2021-03-20T11:27:29.000Z",
+            "dishId": 1,
+            "userId": 1,
+            "typeId": 3,
+            "Dish": {
+                "id": 1,
+                "name": "Falukorv och makaroner",
+                "createdAt": "2021-03-20T15:36:49.000Z",
+                "updatedAt": "2021-03-20T15:36:49.000Z"
+            }
+        }
+    ]
 }
+```
 
-function addNumbers() {
-  console.trace();
+### Dishes
+#### Users dishes
+Remove timestamps.
+```
+{
+    "dishes": [
+        {
+            "id": 1,
+            "name": "Falukorv och makaroner",
+            "createdAt": "2021-03-20T15:36:49.000Z",
+            "updatedAt": "2021-03-20T15:36:49.000Z"
+        },
+        {
+            "id": 2,
+            "name": "Havregrynsgröt",
+            "createdAt": "2021-03-20T15:36:49.000Z",
+            "updatedAt": "2021-03-20T15:36:49.000Z"
+        }
+    ]
 }
+```
+### Errors and Status Codes
+If a request fails any validations, expect a 422 and errors in the following format:
+```
+{
+  "errors":{
+    "body": [
+      "can't be empty"
+    ]
+  }
+}
+```
+#### Other status codes:
+401 for Unauthorized requests, when a request requires authentication but it isn't provided.
 
-getSum();
+403 for Forbidden requests, when a request may be valid but the user doesn't have permissions to perform the action.
+
+404 for Not found requests, when a resource can't be found to fulfill the request.
+
+## Endpoints
+
+Currently all needs auth.
+
+### Users
+Creat new user based on Auth0:
+```
+POST /api/users
+```
+Example request body:
+```
+{
+  "email": "test@test.test"
+}
+```
+
+#### Resources 
+Get users meals, paginated:
+```
+GET /api/user/meals
+GET /api/user/meals?page=1
+```
+
+Get users dishes:
+```
+GET /api/users/dishes
+```
+
+### Meals
+
+Create new meal:
+```
+POST /api/meals
+```
+Example request body:
+```
+{
+  "typeId: 3,
+  "date": '2021-03-24T07:31:48.539Z',
+  "dish": 'Falukorv med makaroner' 
+}
+```
+Update a meal:
+```
+PATCH /api/meals
+```
+Example request body:
+```
+{
+  "id": 12,
+  "typeId: 2,
+  "date": '2021-03-25T07:31:48.000Z',
+  "dish": 'Falukorv med makaroner' 
+}
+```
+Delete a meal:
+```
+DELETE /api/meals/:id
+```

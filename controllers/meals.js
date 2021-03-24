@@ -1,6 +1,6 @@
 const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
 const { validationResult  } = require('express-validator');
-const { splitSub } = require('../utils/splitSub');
+const { splitSub } = require('../utils/splitsub');
 
 module.exports.index = async (req, res) => {
   try {
