@@ -26,7 +26,8 @@ module.exports.meals = async (req, res) => {
       ],
       include: [
         {
-          model: Dish, attributes: ['name']
+          model: Dish,
+          attributes: ['name']
         }
       ]
     });
@@ -64,7 +65,8 @@ module.exports.dishes = async (req, res) => {
       where: { userId: user.id },
       include: [
         {
-          model: Dish, attributes: ['name']
+          model: Dish,
+          attributes: ['name']
         }
       ]
     });
@@ -95,6 +97,8 @@ module.exports.store = async (req, res) => {
         email: req.body.email
       }
     });
+
+    console.log(created);
 
     if (user) {
       res.status(201).json({ user });
@@ -138,12 +142,11 @@ module.exports.popular = async (req, res) => {
       where: { userId: user.id },
       include: [
         {
-          model: Dish, attributes: ['name']
+          model: Dish,
+          attributes: ['name']
         }
       ],
-      order: [
-        [sequelize.literal('count'), 'DESC']
-      ],
+      order: [[sequelize.literal('count'), 'DESC']],
       limit: 10
     });
 
@@ -159,6 +162,94 @@ module.exports.popular = async (req, res) => {
     }
 
     res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
+
+module.exports.menu = async (req, res) => {
+  try {
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   throw new Error(errors.array());
+    // }
+    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDishes = await User_Dish.findAll({
+      attributes: [],
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ],
+      order: [[sequelize.literal('rand()'), 'DESC']],
+      // order: [sequelize.fn('rand'), 'dishId'],
+      limit: 7
+    });
+
+    // if (getMeals.length == 0) {
+    //   res.status(200).json({pager, pageOfItems});
+    // }
+
+    const dishes = [];
+    if (getDishes) {
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues);
+      }
+    }
+
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
+
+module.exports.suggest = async (req, res) => {
+  try {
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   throw new Error(errors.array());
+    // }
+    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDish = await User_Dish.findOne({
+      attributes: [],
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ],
+      order: [[sequelize.literal('rand()'), 'DESC']],
+      // order: [sequelize.fn('rand'), 'dishId'],
+      limit: 7
+    });
+
+    // if (getMeals.length == 0) {
+    //   res.status(200).json({pager, pageOfItems});
+    // }
+
+    // const dishes = [];
+    // if (getDishes) {
+    //   for (let dish of getDishes) {
+    //     dishes.push(dish.dataValues);
+    //   }
+    // }
+
+    const dish = getDish.dataValues.Dish;
+
+    res.status(200).json({ dish });
   } catch (e) {
     res.status(422).json({ errors: { body: [e.message] } });
   }

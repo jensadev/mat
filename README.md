@@ -101,6 +101,32 @@ PageOfItems should be meals?
     ]
 }
 ```
+#### User, suggest a dish
+```
+{
+    "dish": {
+        "name": "Falukorv och makaroner"
+    }
+}
+``` 
+#### User suggest a 7 day menu
+```
+{
+    "dishes": [
+        {
+            "Dish": {
+                "name": "Falukorv och makaroner"
+            }
+        },
+        {
+            "Dish": {
+                "name": "Havregrynsgröt"
+            }
+        }
+    ]
+}
+```
+
 ### Errors and Status Codes
 If a request fails any validations, expect a 422 and errors in the following format:
 ```
@@ -145,6 +171,20 @@ GET /api/user/meals?page=1
 Get users dishes:
 ```
 GET /api/users/dishes
+```
+
+Get users top dishes:
+```
+GET /api/users/popular
+```
+
+Get one of users dishes:
+```
+GET /api/users/suggest
+```
+GET a suggested week menu
+```
+GET /api/users/menu
 ```
 
 ### Meals

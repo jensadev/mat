@@ -9,9 +9,16 @@ router.post('/', body('email').isEmail(), checkJwt, UserController.store); //Sto
 // router.get('/user', checkJwt, UserController.show); //Gets the currently logged-in user
 // router.patch('/user',authByToken,UserController.updateUserDetails)  //Updated user information for current user
 
-router.get('/meals', query('page').isInt().optional({nullable: true}), checkJwt, UserController.meals);
+router.get(
+  '/meals',
+  query('page').isInt().optional({ nullable: true }),
+  checkJwt,
+  UserController.meals
+);
 router.get('/dishes', checkJwt, UserController.dishes);
 
 router.get('/dishes/popular', checkJwt, UserController.popular);
+router.get('/dishes/menu', checkJwt, UserController.menu);
+router.get('/dishes/suggest', checkJwt, UserController.suggest);
 
 module.exports = router;
