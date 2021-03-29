@@ -10,8 +10,8 @@ module.exports = {
      *   name: 'John Doe',
      *   isBetaMember: false
      * }], {});
-    */
-     await queryInterface.bulkInsert(
+     */
+    await queryInterface.bulkInsert(
       'Meals',
       [
         {

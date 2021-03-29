@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User_Dish.belongsTo(models.User, {
-        foreignKey: 'userId',
+        foreignKey: 'userId'
       });
       User_Dish.belongsTo(models.Dish, {
-        foreignKey: 'dishId',
+        foreignKey: 'dishId'
       });
     }
   }
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
-      },
+      }
     },
     {
       sequelize,

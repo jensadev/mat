@@ -19,7 +19,7 @@ module.exports = {
         references: {
           model: 'Dishes',
           key: 'id',
-          as: 'dishId',
+          as: 'dishId'
         }
       },
       typeId: {
@@ -29,7 +29,7 @@ module.exports = {
         references: {
           model: 'Mealtypes',
           key: 'id',
-          as: 'typeId',
+          as: 'typeId'
         }
       },
       userId: {
@@ -39,7 +39,7 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'userId',
+          as: 'userId'
         }
       },
       createdAt: {

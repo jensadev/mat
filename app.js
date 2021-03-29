@@ -8,19 +8,7 @@ const cors = require('cors');
 const compression = require('compression');
 // const helmet = require('helmet')
 const { notFound, errorHandler } = require('./middleware/errorHandler');
-const sequelize = require('sequelize');
 
-// const User = require('./models/user');
-// const Meal = require('./models/meal');
-// const Dish = require('./models/dish');
-// const Mealtype = require('./models/mealtype');
-
-// const sync = async () => await sequelize.sync({ alter: true });
-// sync();
-
-// const indexRouter = require('./routes/index.route');
-// const mealsRouter = require('./routes/meals.route');
-// const dishRouter = require('./routes/dish.route');
 const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
 

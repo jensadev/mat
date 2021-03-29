@@ -15,7 +15,7 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'userId',
+          as: 'userId'
         }
       },
       dishId: {
@@ -25,7 +25,7 @@ module.exports = {
         references: {
           model: 'Dishes',
           key: 'id',
-          as: 'dishId',
+          as: 'dishId'
         }
       },
       createdAt: {

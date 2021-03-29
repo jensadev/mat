@@ -1,5 +1,5 @@
 const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
-const { validationResult  } = require('express-validator');
+const { validationResult } = require('express-validator');
 const { splitSub } = require('../utils/splitsub');
 
 module.exports.index = async (req, res) => {
@@ -33,41 +33,40 @@ module.exports.index = async (req, res) => {
   }
 };
 
-module.exports.store =  async (req,res) => {
-  try{
+module.exports.store = async (req, res) => {
+  try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new Error(errors.array());
     }
     const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
 
-    if(!user) {
-      throw new Error("User does not exist");
+    if (!user) {
+      throw new Error('User does not exist');
     }
 
-    const [dish, dc] = await Dish.findOrCreate({
+    const [dish] = await Dish.findOrCreate({
       where: { name: req.body.dish }
     });
 
-    const [userDish, udc] = await User_Dish.findOrCreate({
-      where: {userId: user.id, dishId: dish.id}
+    await User_Dish.findOrCreate({
+      where: { userId: user.id, dishId: dish.id }
     });
 
-      let meal = await Meal.create({
-          date : req.body.date,
-          userId: user.id,
-          dishId: dish.id,
-          typeId: req.body.typeId
-      })
-      
-      res.status(201).json({meal})
-      
-  } catch(e){
+    let meal = await Meal.create({
+      date: req.body.date,
+      userId: user.id,
+      dishId: dish.id,
+      typeId: req.body.typeId
+    });
+
+    res.status(201).json({ meal });
+  } catch (e) {
     return res.status(422).json({
-        errors: { body: [ 'Could not create meal', e.message ] }
-    })
+      errors: { body: ['Could not create meal', e.message] }
+    });
   }
-}
+};
 
 module.exports.destroy = async (req, res) => {
   try {
@@ -77,7 +76,7 @@ module.exports.destroy = async (req, res) => {
     }
     let meal = await Meal.findByPk(req.params.id);
 
-    console.log(req.params.id)
+    console.log(req.params.id);
 
     if (!meal) {
       res.status(404);
@@ -102,7 +101,7 @@ module.exports.destroy = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
-  try{
+  try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new Error(errors.array());
@@ -122,27 +121,27 @@ module.exports.update = async (req, res) => {
       throw new Error('You must be the creator to modify this meal');
     }
 
-    const [dish, dc] = await Dish.findOrCreate({
+    const [dish] = await Dish.findOrCreate({
       where: { name: req.body.dish }
     });
 
-    const [userDish, udc] = await User_Dish.findOrCreate({
-      where: {userId: user.id, dishId: dish.id}
+    await User_Dish.findOrCreate({
+      where: { userId: user.id, dishId: dish.id }
     });
 
     const date = req.body.date ? req.body.date : meal.date;
-    const typeId = parseInt(req.body.typeId) ? parseInt(req.body.typeId) : meal.typeId;
+    const typeId = parseInt(req.body.typeId)
+      ? parseInt(req.body.typeId)
+      : meal.typeId;
     const dishId = dish.id;
     const userId = user.id;
 
-    const updatedMeal = await meal.update({date, typeId, dishId, userId});
+    const updatedMeal = await meal.update({ date, typeId, dishId, userId });
 
-    res.status(200).json({updatedMeal});
-  } catch(e){
+    res.status(200).json({ updatedMeal });
+  } catch (e) {
     return res.status(422).json({
-        errors: { body: [ 'Could not update meal', e.message ] }
-    })
+      errors: { body: ['Could not update meal', e.message] }
+    });
   }
-}
-
-
+};
