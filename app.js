@@ -8,7 +8,6 @@ const cors = require('cors');
 const compression = require('compression');
 // const helmet = require('helmet')
 const { notFound, errorHandler } = require('./middleware/errorHandler');
-
 const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
 

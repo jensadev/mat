@@ -99,6 +99,8 @@ module.exports.store = async (req, res) => {
 
     if (user) {
       if (user.dataValues.password) delete user.dataValues.password;
+      delete user.dataValues.createdAt;
+      delete user.dataValues.updatedAt;
       user.dataValues.token = await sign(user);
       res.status(201).json({ user });
     }
@@ -129,11 +131,15 @@ module.exports.login = async (req, res) => {
     }
 
     delete user.dataValues.password;
-    user.dataValues.token = await sign({
+    delete user.dataValues.createdAt;
+    delete user.dataValues.updatedAt;
+    const token = await sign({
       id: user.dataValues.id,
       email: user.dataValues.email,
       handle: user.dataValues.handle
     });
+
+    user.dataValues.token = token;
 
     res.status(200).json({ user });
   } catch (e) {
