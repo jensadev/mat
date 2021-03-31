@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
 const { body, param } = require('express-validator');
-const { checkJwt } = require('../middleware/checkJwt');
+const { authByToken } = require('../middleware/auth');
 
 const MealsController = require('../controllers/meals');
 
 // router.get('/', checkJwt, MealsController.index);
 router.post(
   '/',
-  body('dish').trim().escape(),
+  body('dish').not().isEmpty().trim().escape(),
   body('typeId').isInt(),
   body('date').isISO8601(),
-  checkJwt,
+  authByToken,
   MealsController.store
 );
 
 router.patch(
   '/',
   body('id').isInt(),
-  body('dish').trim().escape(),
+  body('dish').not().isEmpty().trim().escape(),
   body('typeId').isInt(),
   body('date').isISO8601(),
-  checkJwt,
+  authByToken,
   MealsController.update
 );
 
@@ -30,6 +30,11 @@ router.patch(
 // router.post('/',authByToken,ArticleController.createArticle)        //Create an article
 // router.get('/:slug',ArticleController.getSingleArticleBySlug)       //Get an article
 // router.patch('/:slug',authByToken,ArticleController.updateArticle)  //Update an article
-router.delete('/:id', param('id').isInt(), checkJwt, MealsController.destroy); //Delete resource
+router.delete(
+  '/:id',
+  param('id').isInt(),
+  authByToken,
+  MealsController.destroy
+);
 
 module.exports = router;

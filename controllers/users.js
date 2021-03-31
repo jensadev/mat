@@ -1,19 +1,16 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
 const paginate = require('jw-paginate');
-const { splitSub } = require('../utils/splitsub');
 const { generateUserName } = require('../utils/username');
-const sequelize = require('sequelize');
+// const sequelize = require('sequelize');
 const { hashPassword, matchPassword } = require('../utils/password');
 const { sign } = require('../utils/jwt');
 
 module.exports.meals = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
-    const user = await User.findOne({ where: { email: req.user.email } });
+    validationResult(req).throw();
+
+    const user = await User.findByPk(req.user.id);
     if (!user) {
       res.status(404);
       throw new Error('User id not valid');
@@ -34,10 +31,6 @@ module.exports.meals = async (req, res) => {
       ]
     });
 
-    // if (getMeals.length == 0) {
-    //   res.status(200).json({pager, pageOfItems});
-    // }
-
     const meals = [];
     if (getMeals) {
       for (let meal of getMeals) {
@@ -51,13 +44,13 @@ module.exports.meals = async (req, res) => {
 
     res.status(200).json({ pager, pageOfItems });
   } catch (e) {
-    res.status(422).json({ errors: { body: [e.message] } });
+    res.status(422).json({ errors: { body: [e.message || e.mapped()] } });
   }
 };
 
 module.exports.dishes = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    const user = await User.findByPk(req.user.id);
     if (!user) {
       res.status(404);
       throw new Error('User id not valid');
@@ -137,6 +130,7 @@ module.exports.login = async (req, res) => {
 
     delete user.dataValues.password;
     user.dataValues.token = await sign({
+      id: user.dataValues.id,
       email: user.dataValues.email,
       handle: user.dataValues.handle
     });
@@ -150,147 +144,122 @@ module.exports.login = async (req, res) => {
   }
 };
 
-// module.exports.show = async (req, res) => {
+// module.exports.popular = async (req, res) => {
 //   try {
-//     const user = await User.findByPk(req.user.sub);
+//     // const errors = validationResult(req);
+//     // if (!errors.isEmpty()) {
+//     //   throw new Error(errors.array());
+//     // }
+//     const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
 //     if (!user) {
-//       throw new Error('No such user found');
+//       res.status(404);
+//       throw new Error('User id not valid');
 //     }
-//     return res.status(200).json({ user });
-//   } catch (e) {
-//     return res.status(404).json({
-//       errors: { body: [e.message] }
+
+//     const getDishes = await Meal.findAll({
+//       attributes: [[sequelize.fn('count', sequelize.col('dishId')), 'count']],
+//       group: ['dishId'],
+//       where: { userId: user.id },
+//       include: [
+//         {
+//           model: Dish,
+//           attributes: ['name']
+//         }
+//       ],
+//       order: [[sequelize.literal('count'), 'DESC']],
+//       limit: 10
 //     });
+
+//     // if (getMeals.length == 0) {
+//     //   res.status(200).json({pager, pageOfItems});
+//     // }
+
+//     const dishes = [];
+//     if (getDishes) {
+//       for (let dish of getDishes) {
+//         dishes.push(dish.dataValues);
+//       }
+//     }
+
+//     res.status(200).json({ dishes });
+//   } catch (e) {
+//     res.status(422).json({ errors: { body: [e.message] } });
 //   }
 // };
 
-module.exports.popular = async (req, res) => {
-  try {
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   throw new Error(errors.array());
-    // }
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-    if (!user) {
-      res.status(404);
-      throw new Error('User id not valid');
-    }
+// module.exports.menu = async (req, res) => {
+//   try {
+//     // const errors = validationResult(req);
+//     // if (!errors.isEmpty()) {
+//     //   throw new Error(errors.array());
+//     // }
+//     const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+//     if (!user) {
+//       res.status(404);
+//       throw new Error('User id not valid');
+//     }
 
-    const getDishes = await Meal.findAll({
-      attributes: [[sequelize.fn('count', sequelize.col('dishId')), 'count']],
-      group: ['dishId'],
-      where: { userId: user.id },
-      include: [
-        {
-          model: Dish,
-          attributes: ['name']
-        }
-      ],
-      order: [[sequelize.literal('count'), 'DESC']],
-      limit: 10
-    });
+//     const getDishes = await User_Dish.findAll({
+//       attributes: [],
+//       where: { userId: user.id },
+//       include: [
+//         {
+//           model: Dish,
+//           attributes: ['name']
+//         }
+//       ],
+//       order: [[sequelize.literal('rand()'), 'DESC']],
+//       // order: [sequelize.fn('rand'), 'dishId'],
+//       limit: 7
+//     });
 
-    // if (getMeals.length == 0) {
-    //   res.status(200).json({pager, pageOfItems});
-    // }
+//     // if (getMeals.length == 0) {
+//     //   res.status(200).json({pager, pageOfItems});
+//     // }
 
-    const dishes = [];
-    if (getDishes) {
-      for (let dish of getDishes) {
-        dishes.push(dish.dataValues);
-      }
-    }
+//     const dishes = [];
+//     if (getDishes) {
+//       for (let dish of getDishes) {
+//         dishes.push(dish.dataValues);
+//       }
+//     }
 
-    res.status(200).json({ dishes });
-  } catch (e) {
-    res.status(422).json({ errors: { body: [e.message] } });
-  }
-};
+//     res.status(200).json({ dishes });
+//   } catch (e) {
+//     res.status(422).json({ errors: { body: [e.message] } });
+//   }
+// };
 
-module.exports.menu = async (req, res) => {
-  try {
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   throw new Error(errors.array());
-    // }
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-    if (!user) {
-      res.status(404);
-      throw new Error('User id not valid');
-    }
+// module.exports.suggest = async (req, res) => {
+//   try {
+//     // const errors = validationResult(req);
+//     // if (!errors.isEmpty()) {
+//     //   throw new Error(errors.array());
+//     // }
+//     const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+//     if (!user) {
+//       res.status(404);
+//       throw new Error('User id not valid');
+//     }
 
-    const getDishes = await User_Dish.findAll({
-      attributes: [],
-      where: { userId: user.id },
-      include: [
-        {
-          model: Dish,
-          attributes: ['name']
-        }
-      ],
-      order: [[sequelize.literal('rand()'), 'DESC']],
-      // order: [sequelize.fn('rand'), 'dishId'],
-      limit: 7
-    });
+//     const getDish = await User_Dish.findOne({
+//       attributes: [],
+//       where: { userId: user.id },
+//       include: [
+//         {
+//           model: Dish,
+//           attributes: ['name']
+//         }
+//       ],
+//       order: [[sequelize.literal('rand()'), 'DESC']],
+//       // order: [sequelize.fn('rand'), 'dishId'],
+//       limit: 7
+//     });
 
-    // if (getMeals.length == 0) {
-    //   res.status(200).json({pager, pageOfItems});
-    // }
+//     const dish = getDish.dataValues.Dish;
 
-    const dishes = [];
-    if (getDishes) {
-      for (let dish of getDishes) {
-        dishes.push(dish.dataValues);
-      }
-    }
-
-    res.status(200).json({ dishes });
-  } catch (e) {
-    res.status(422).json({ errors: { body: [e.message] } });
-  }
-};
-
-module.exports.suggest = async (req, res) => {
-  try {
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //   throw new Error(errors.array());
-    // }
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-    if (!user) {
-      res.status(404);
-      throw new Error('User id not valid');
-    }
-
-    const getDish = await User_Dish.findOne({
-      attributes: [],
-      where: { userId: user.id },
-      include: [
-        {
-          model: Dish,
-          attributes: ['name']
-        }
-      ],
-      order: [[sequelize.literal('rand()'), 'DESC']],
-      // order: [sequelize.fn('rand'), 'dishId'],
-      limit: 7
-    });
-
-    // if (getMeals.length == 0) {
-    //   res.status(200).json({pager, pageOfItems});
-    // }
-
-    // const dishes = [];
-    // if (getDishes) {
-    //   for (let dish of getDishes) {
-    //     dishes.push(dish.dataValues);
-    //   }
-    // }
-
-    const dish = getDish.dataValues.Dish;
-
-    res.status(200).json({ dish });
-  } catch (e) {
-    res.status(422).json({ errors: { body: [e.message] } });
-  }
-};
+//     res.status(200).json({ dish });
+//   } catch (e) {
+//     res.status(422).json({ errors: { body: [e.message] } });
+//   }
+// };

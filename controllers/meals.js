@@ -1,45 +1,42 @@
-const { Meal, User, Dish, Mealtype, User_Dish } = require('../models/');
+const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
-const { splitSub } = require('../utils/splitsub');
+// const { splitSub } = require('../utils/splitsub');
 
-module.exports.index = async (req, res) => {
-  try {
-    console.table(req.user.sub);
-    const getMeals = await Meal.findAll({
-      include: [
-        {
-          model: Dish
-          // where: { name: 'Dish name'}
-        },
-        {
-          model: User
-        },
-        {
-          model: Mealtype
-        }
-      ]
-    });
+// module.exports.index = async (req, res) => {
+//   try {
+//     console.table(req.user.sub);
+//     const getMeals = await Meal.findAll({
+//       include: [
+//         {
+//           model: Dish
+//           // where: { name: 'Dish name'}
+//         },
+//         {
+//           model: User
+//         },
+//         {
+//           model: Mealtype
+//         }
+//       ]
+//     });
 
-    // console.table(getMeals[0].dataValues);
+//     // console.table(getMeals[0].dataValues);
 
-    const meals = [];
-    if (getMeals)
-      for (let meal of getMeals) {
-        meals.push(meal.dataValues);
-      }
-    res.status(200).json({ meals });
-  } catch (e) {
-    res.status(422).json({ errors: { body: [e.message] } });
-  }
-};
+//     const meals = [];
+//     if (getMeals)
+//       for (let meal of getMeals) {
+//         meals.push(meal.dataValues);
+//       }
+//     res.status(200).json({ meals });
+//   } catch (e) {
+//     res.status(422).json({ errors: { body: [e.message] } });
+//   }
+// };
 
 module.exports.store = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    validationResult(req).throw();
+    const user = await User.findByPk(req.user.id);
 
     if (!user) {
       throw new Error('User does not exist');
@@ -63,28 +60,21 @@ module.exports.store = async (req, res) => {
     res.status(201).json({ meal });
   } catch (e) {
     return res.status(422).json({
-      errors: { body: ['Could not create meal', e.message] }
+      errors: { body: ['Could not create meal', e.message || e.mapped()] }
     });
   }
 };
 
 module.exports.destroy = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
+    validationResult(req).throw();
     let meal = await Meal.findByPk(req.params.id);
-
-    console.log(req.params.id);
-
     if (!meal) {
       res.status(404);
       throw new Error('Meal not found');
     }
 
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-
+    const user = await User.findByPk(req.user.id);
     if (user.id != meal.userId) {
       res.status(403);
       throw new Error('You must be the creator to modify this meal');
@@ -95,17 +85,14 @@ module.exports.destroy = async (req, res) => {
   } catch (e) {
     const code = res.statusCode ? res.statusCode : 422;
     return res.status(code).json({
-      errors: { body: ['Could not create article', e.message] }
+      errors: { body: ['Could not delete meal', e.message || e.mapped()] }
     });
   }
 };
 
 module.exports.update = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
+    validationResult(req).throw();
 
     let meal = await Meal.findByPk(req.body.id);
 
@@ -114,8 +101,7 @@ module.exports.update = async (req, res) => {
       throw new Error('Meal not found');
     }
 
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
-
+    const user = await User.findByPk(req.user.id);
     if (user.id != meal.userId) {
       res.status(403);
       throw new Error('You must be the creator to modify this meal');
@@ -141,7 +127,7 @@ module.exports.update = async (req, res) => {
     res.status(200).json({ updatedMeal });
   } catch (e) {
     return res.status(422).json({
-      errors: { body: ['Could not update meal', e.message] }
+      errors: { body: ['Could not update meal', e.message || e.mapped()] }
     });
   }
 };

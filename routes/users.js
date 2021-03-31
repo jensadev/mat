@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/users');
-// const { checkJwt } = require('../middleware/checkJwt');
 const { body, query } = require('express-validator');
 const { authByToken } = require('../middleware/auth');
 
@@ -36,8 +35,8 @@ router.get(
 );
 router.get('/dishes', authByToken, UserController.dishes);
 
-router.get('/dishes/popular', authByToken, UserController.popular);
-router.get('/dishes/menu', authByToken, UserController.menu);
-router.get('/dishes/suggest', authByToken, UserController.suggest);
+// router.get('/dishes/popular', authByToken, UserController.popular);
+// router.get('/dishes/menu', authByToken, UserController.menu);
+// router.get('/dishes/suggest', authByToken, UserController.suggest);
 
 module.exports = router;
