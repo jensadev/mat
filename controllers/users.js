@@ -4,6 +4,8 @@ const paginate = require('jw-paginate');
 const { splitSub } = require('../utils/splitsub');
 const { generateUserName } = require('../utils/username');
 const sequelize = require('sequelize');
+const { hashPassword, matchPassword } = require('../utils/password');
+const { sign } = require('../utils/jwt');
 
 module.exports.meals = async (req, res) => {
   try {
@@ -88,24 +90,65 @@ module.exports.store = async (req, res) => {
     if (!errors.isEmpty()) {
       throw new Error(errors.array());
     }
-    if (!req.user.sub) throw new Error('Sub is Required');
 
-    const [user, created] = await User.findOrCreate({
-      where: { sub: splitSub(req.user.sub) },
-      defaults: {
-        nickname: generateUserName(),
-        email: req.body.email
-      }
+    const existingUser = await User.findByPk(req.body.email);
+    if (existingUser) {
+      throw new Error('User aldready exists');
+    }
+
+    const password = await hashPassword(req.body.password);
+
+    const user = await User.create({
+      handle: generateUserName(),
+      password: password,
+      email: req.body.email
     });
 
-    console.log(created);
-
     if (user) {
+      if (user.dataValues.password) delete user.dataValues.password;
+      user.dataValues.token = await sign(user);
       res.status(201).json({ user });
     }
   } catch (e) {
     res
       .status(422)
+      .json({ errors: { body: ['Could not create user ', e.message] } });
+  }
+};
+
+module.exports.signin = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new Error(errors.array());
+    }
+
+    const user = await User.find(req.body.email);
+
+    if (!user) {
+      res.status(401);
+      throw new Error('No User found');
+    }
+
+    //Check if password matches
+    const passwordMatch = await matchPassword(user.password, req.body.password);
+
+    if (!passwordMatch) {
+      res.status(401);
+      throw new Error('Invalid password or email');
+    }
+
+    delete user.dataValues.password;
+    user.dataValues.token = await sign({
+      email: user.dataValues.email,
+      handle: user.dataValues.handle
+    });
+
+    res.status(200).json({ user });
+  } catch (e) {
+    const status = res.statusCode ? res.statusCode : 500;
+    res
+      .status(status)
       .json({ errors: { body: ['Could not create user ', e.message] } });
   }
 };
