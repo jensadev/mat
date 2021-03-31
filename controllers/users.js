@@ -13,7 +13,7 @@ module.exports.meals = async (req, res) => {
     if (!errors.isEmpty()) {
       throw new Error(errors.array());
     }
-    const user = await User.findOne({ where: { sub: splitSub(req.user.sub) } });
+    const user = await User.findOne({ where: { email: req.user.email } });
     if (!user) {
       res.status(404);
       throw new Error('User id not valid');
@@ -86,12 +86,12 @@ module.exports.dishes = async (req, res) => {
 
 module.exports.store = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
+    validationResult(req).throw();
 
-    const existingUser = await User.findByPk(req.body.email);
+    const existingUser = await User.findOne({
+      where: { email: req.body.email }
+    });
+
     if (existingUser) {
       throw new Error('User aldready exists');
     }
@@ -110,20 +110,17 @@ module.exports.store = async (req, res) => {
       res.status(201).json({ user });
     }
   } catch (e) {
-    res
-      .status(422)
-      .json({ errors: { body: ['Could not create user ', e.message] } });
+    res.status(422).json({
+      errors: { body: ['Could not create user ', e.message || e.mapped()] }
+    });
   }
 };
 
-module.exports.signin = async (req, res) => {
+module.exports.login = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      throw new Error(errors.array());
-    }
+    validationResult(req).throw();
 
-    const user = await User.find(req.body.email);
+    const user = await User.findOne({ where: { email: req.body.email } });
 
     if (!user) {
       res.status(401);
@@ -147,9 +144,9 @@ module.exports.signin = async (req, res) => {
     res.status(200).json({ user });
   } catch (e) {
     const status = res.statusCode ? res.statusCode : 500;
-    res
-      .status(status)
-      .json({ errors: { body: ['Could not create user ', e.message] } });
+    res.status(status).json({
+      errors: { body: ['Could not login user ', e.message || e.mapped()] }
+    });
   }
 };
 

@@ -22,10 +22,10 @@ router.post(
 // router.patch('/user',authByToken,UserController.updateUserDetails)  //Updated user information for current user
 
 router.post(
-  '/users/signin',
+  '/login',
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 8 }),
-  UserController.signin
+  UserController.login
 );
 
 router.get(

@@ -13,6 +13,7 @@ module.exports.errorHandler = (err, req, res) => {
   const info = {
     message: err.message
   };
+
   if (process.env.NODE_ENV === 'development') {
     info.stack = err.stack;
   }
