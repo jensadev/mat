@@ -8,12 +8,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      sub: {
-        allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
-      },
-      nickname: {
+      // sub: {
+      //   allowNull: false,
+      //   type: Sequelize.STRING,
+      //   unique: true
+      // },
+      handle: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true
@@ -22,6 +22,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true
+      },
+      password: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

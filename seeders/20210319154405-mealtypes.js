@@ -35,5 +35,11 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+    // await queryInterface.bulkDelete('Mealtypes', null, {
+    //   truncate: true,
+    //   cascade: true,
+    //   restartIdentity: true
+    // });
+    await queryInterface.dropTable('Mealtypes');
   }
 };

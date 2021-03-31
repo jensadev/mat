@@ -1,4 +1,4 @@
-'use strict';
+('use strict');
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -15,9 +15,10 @@ module.exports = {
       'Users',
       [
         {
-          sub: 'invalid',
-          nickname: 'FantastiskMakapär2021',
-          email: 'fras@fras.se',
+          handle: 'FantastiskMakapär2021',
+          email: 'test@test.se',
+          password:
+            '$2b$10$.Fo6pR6oTE28j.bH5Djt1.MP0KSJyEKjIsTrld98ZKRZxRXawNb6e',
           createdAt: new Date(),
           updatedAt: new Date()
         }
@@ -33,5 +34,11 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
+    // await queryInterface.bulkDelete('Users', null, {
+    //   // truncate: true,
+    //   // cascade: true,
+    //   // restartIdentity: true
+    // });
+    await queryInterface.dropTable('Users');
   }
 };
