@@ -3,11 +3,7 @@
 CORS enabled.
 There are migrations for sequlize.
 
-## Auth0
-
-https://auth0.com/
-
-### Header
+## Auth Header
 
 ```
 headers: {
@@ -22,7 +18,7 @@ headers: {
 
 #### Users meals
 
-PageOfItems should be meals?
+Paginated
 
 ```
 {
@@ -150,18 +146,23 @@ If a request fails any validations, expect a 422 and errors in the following for
 Currently all needs auth.
 
 ### Users
-Creat new user based on Auth0:
+Register user
 ```
 POST /api/users
 ```
 Example request body:
 ```
 {
-  "email": "test@test.test"
+    "user": {
+        "email": "test@test.test",
+        "password": "testpass123",
+        "passwordConfirmation": "testpass123"
+    }
 }
 ```
 
 #### Resources 
+
 Get users meals, paginated:
 ```
 GET /api/user/meals
@@ -196,9 +197,11 @@ POST /api/meals
 Example request body:
 ```
 {
-  "typeId: 3,
-  "date": '2021-03-24T07:31:48.539Z',
-  "dish": 'Falukorv med makaroner' 
+    "meal": {
+        "dish": "Hamburgare",
+        "typeId": 3,
+        "date": "2021-03-12"
+    }
 }
 ```
 Update a meal:
@@ -208,10 +211,12 @@ PATCH /api/meals
 Example request body:
 ```
 {
-  "id": 12,
-  "typeId: 2,
-  "date": '2021-03-25T07:31:48.000Z',
-  "dish": 'Falukorv med makaroner' 
+    "meal": {
+        "id": 11,
+        "dish": "Havregrynsgröt",
+        "typeId": 2,
+        "date": "2021-03-13"
+    }
 }
 ```
 Delete a meal:
