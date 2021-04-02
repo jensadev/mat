@@ -82,19 +82,19 @@ module.exports.store = async (req, res) => {
     validationResult(req).throw();
 
     const existingUser = await User.findOne({
-      where: { email: req.body.email }
+      where: { email: req.body.user.email }
     });
 
     if (existingUser) {
       throw new Error('User aldready exists');
     }
 
-    const password = await hashPassword(req.body.password);
+    const password = await hashPassword(req.body.user.password);
 
     const user = await User.create({
       handle: generateUserName(),
       password: password,
-      email: req.body.email
+      email: req.body.user.email
     });
 
     if (user) {
@@ -112,10 +112,11 @@ module.exports.store = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
+  console.table(req.body);
   try {
     validationResult(req).throw();
 
-    const user = await User.findOne({ where: { email: req.body.email } });
+    const user = await User.findOne({ where: { email: req.body.user.email } });
 
     if (!user) {
       res.status(401);
@@ -123,7 +124,10 @@ module.exports.login = async (req, res) => {
     }
 
     //Check if password matches
-    const passwordMatch = await matchPassword(user.password, req.body.password);
+    const passwordMatch = await matchPassword(
+      user.password,
+      req.body.user.password
+    );
 
     if (!passwordMatch) {
       res.status(401);

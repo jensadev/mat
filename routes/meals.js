@@ -8,19 +8,19 @@ const MealsController = require('../controllers/meals');
 // router.get('/', checkJwt, MealsController.index);
 router.post(
   '/',
-  body('dish').not().isEmpty().trim().escape(),
-  body('typeId').isInt(),
-  body('date').isISO8601(),
+  body('meal.dish').not().isEmpty().trim().escape(),
+  body('meal.typeId').isInt(),
+  body('meal.date').isISO8601(),
   authByToken,
   MealsController.store
 );
 
 router.patch(
   '/',
-  body('id').isInt(),
-  body('dish').not().isEmpty().trim().escape(),
-  body('typeId').isInt(),
-  body('date').isISO8601(),
+  body('meal.id').isInt(),
+  body('meal.dish').not().isEmpty().trim().escape(),
+  body('meal.typeId').isInt(),
+  body('meal.date').isISO8601(),
   authByToken,
   MealsController.update
 );

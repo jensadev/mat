@@ -43,7 +43,7 @@ module.exports.store = async (req, res) => {
     }
 
     const [dish] = await Dish.findOrCreate({
-      where: { name: req.body.dish }
+      where: { name: req.body.meal.dish }
     });
 
     await User_Dish.findOrCreate({
@@ -51,10 +51,10 @@ module.exports.store = async (req, res) => {
     });
 
     let meal = await Meal.create({
-      date: req.body.date,
+      date: req.body.meal.date,
       userId: user.id,
       dishId: dish.id,
-      typeId: req.body.typeId
+      typeId: req.body.meal.typeId
     });
 
     res.status(201).json({ meal });
@@ -91,10 +91,11 @@ module.exports.destroy = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
+  console.table(req.body);
   try {
     validationResult(req).throw();
 
-    let meal = await Meal.findByPk(req.body.id);
+    let meal = await Meal.findByPk(req.body.meal.id);
 
     if (!meal) {
       res.status(404);
@@ -108,16 +109,16 @@ module.exports.update = async (req, res) => {
     }
 
     const [dish] = await Dish.findOrCreate({
-      where: { name: req.body.dish }
+      where: { name: req.body.meal.dish }
     });
 
     await User_Dish.findOrCreate({
       where: { userId: user.id, dishId: dish.id }
     });
 
-    const date = req.body.date ? req.body.date : meal.date;
-    const typeId = parseInt(req.body.typeId)
-      ? parseInt(req.body.typeId)
+    const date = req.body.meal.date ? req.body.meal.date : meal.date;
+    const typeId = parseInt(req.body.meal.typeId)
+      ? parseInt(req.body.meal.typeId)
       : meal.typeId;
     const dishId = dish.id;
     const userId = user.id;

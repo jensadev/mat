@@ -6,10 +6,10 @@ const { authByToken } = require('../middleware/auth');
 
 router.post(
   '/',
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 }),
-  body('passwordConfirmation').custom((value, { req }) => {
-    if (value !== req.body.password) {
+  body('user.email').isEmail().normalizeEmail(),
+  body('user.password').isLength({ min: 8 }),
+  body('user.passwordConfirmation').custom((value, { req }) => {
+    if (value !== req.body.user.password) {
       throw new Error('Password confirmation does not match password');
     }
     return true;
@@ -22,8 +22,8 @@ router.post(
 
 router.post(
   '/login',
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 }),
+  body('user.email').isEmail().normalizeEmail(),
+  body('user.password').isLength({ min: 8 }),
   UserController.login
 );
 
