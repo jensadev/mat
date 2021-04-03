@@ -1,37 +1,5 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
-// const { splitSub } = require('../utils/splitsub');
-
-// module.exports.index = async (req, res) => {
-//   try {
-//     console.table(req.user.sub);
-//     const getMeals = await Meal.findAll({
-//       include: [
-//         {
-//           model: Dish
-//           // where: { name: 'Dish name'}
-//         },
-//         {
-//           model: User
-//         },
-//         {
-//           model: Mealtype
-//         }
-//       ]
-//     });
-
-//     // console.table(getMeals[0].dataValues);
-
-//     const meals = [];
-//     if (getMeals)
-//       for (let meal of getMeals) {
-//         meals.push(meal.dataValues);
-//       }
-//     res.status(200).json({ meals });
-//   } catch (e) {
-//     res.status(422).json({ errors: { body: [e.message] } });
-//   }
-// };
 
 module.exports.store = async (req, res) => {
   try {
@@ -91,7 +59,6 @@ module.exports.destroy = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
-  console.table(req.body);
   try {
     validationResult(req).throw();
 

@@ -35,8 +35,8 @@ router.get(
 );
 router.get('/dishes', authByToken, UserController.dishes);
 
-// router.get('/dishes/popular', authByToken, UserController.popular);
-// router.get('/dishes/menu', authByToken, UserController.menu);
-// router.get('/dishes/suggest', authByToken, UserController.suggest);
+router.get('/dishes/top', authByToken, UserController.top);
+router.get('/dishes/menu', authByToken, UserController.menu);
+router.get('/dishes/one', authByToken, UserController.one);
 
 module.exports = router;

@@ -1,10 +1,8 @@
 # API for mat
-
 CORS enabled.
 There are migrations for sequlize.
 
 ## Auth Header
-
 ```
 headers: {
   'Content-Type': 'application/json',
@@ -12,12 +10,9 @@ headers: {
 }
 ```
 
-## JSON returned
-
-### Meals
-
-#### Users meals
-
+# JSON returned
+## Meals
+### Users meals
 Paginated
 
 ```
@@ -64,21 +59,23 @@ Paginated
 }
 ```
 
-### Dishes
-#### Users dishes
+## Dishes
+### Users dishes
 ```
 {
     "dishes": [
         {
+            "id": 3,
             "name": "Falukorv och makaroner"
         },
         {
+            "id": 7,
             "name": "Havregrynsgröt"
         }
     ]
 }
 ```
-#### Users most popular dishes
+### Users most popular dishes
 ```
 {
     "dishes": [
@@ -97,7 +94,7 @@ Paginated
     ]
 }
 ```
-#### User, suggest a dish
+### User, suggest a dish
 ```
 {
     "dish": {
@@ -105,7 +102,7 @@ Paginated
     }
 }
 ``` 
-#### User suggest a 7 day menu
+### User suggest a 7 day menu
 ```
 {
     "dishes": [
@@ -123,7 +120,7 @@ Paginated
 }
 ```
 
-### Errors and Status Codes
+# Errors and Status Codes
 If a request fails any validations, expect a 422 and errors in the following format:
 ```
 {
@@ -134,18 +131,52 @@ If a request fails any validations, expect a 422 and errors in the following for
   }
 }
 ```
-#### Other status codes:
+With fields:
+```
+{
+    "errors": {
+        "body": [
+            "Could not update meal",
+            {
+                "meal.id": {
+                    "msg": "Invalid value",
+                    "param": "meal.id",
+                    "location": "body"
+                },
+                "meal.dish": {
+                    "msg": "Invalid value",
+                    "param": "meal.dish",
+                    "location": "body"
+                },
+                "meal.typeId": {
+                    "msg": "Invalid value",
+                    "param": "meal.typeId",
+                    "location": "body"
+                },
+                "meal.date": {
+                    "msg": "Invalid value",
+                    "param": "meal.date",
+                    "location": "body"
+                }
+            }
+        ]
+    }
+}
+```
+
+## Other status codes:
+
 401 for Unauthorized requests, when a request requires authentication but it isn't provided.
 
 403 for Forbidden requests, when a request may be valid but the user doesn't have permissions to perform the action.
 
 404 for Not found requests, when a resource can't be found to fulfill the request.
 
-## Endpoints
+# Endpoints
 
 Currently all needs auth.
 
-### Users
+## Users
 Register user
 ```
 POST /api/users
@@ -160,8 +191,22 @@ Example request body:
     }
 }
 ```
+Login user
+```
+POST /api/login
+```
 
-#### Resources 
+Example request body:
+```
+{
+    "user": {
+        "email": "test@test.test",
+        "password": "testpass123"
+    }
+}
+```
+
+## Resources 
 
 Get users meals, paginated:
 ```
@@ -176,19 +221,20 @@ GET /api/users/dishes
 
 Get users top dishes:
 ```
-GET /api/users/popular
+GET /api/users/dishes/top
 ```
 
 Get one of users dishes:
 ```
-GET /api/users/suggest
-```
-GET a suggested week menu
-```
-GET /api/users/menu
+GET /api/users/dishes/one
 ```
 
-### Meals
+GET a suggested week menu:
+```
+GET /api/users/dishes/menu
+```
+
+## Meals
 
 Create new meal:
 ```
@@ -222,4 +268,24 @@ Example request body:
 Delete a meal:
 ```
 DELETE /api/meals/:id
+```
+
+## Dishes
+
+Update a dish:
+```
+PATCH /api/dishes
+```
+Example request body:
+```
+{
+    "dish": {
+        "id": 14,
+        "name": "Panikaladåb"
+    }
+}
+```
+Delete a dish:
+```
+DELETE /api/dishes/:id
 ```

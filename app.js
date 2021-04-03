@@ -10,6 +10,7 @@ const compression = require('compression');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
+const dishesRouter = require('./routes/dishes');
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/users', usersRouter);
 // app.use('/', indexRouter);
 app.use('/api/meals', mealsRouter);
+app.use('/api/dishes', dishesRouter);
+
 app.use(notFound);
 app.use(errorHandler);
 // app.use((req, res, next) => {
