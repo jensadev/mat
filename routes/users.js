@@ -9,7 +9,7 @@ router.post(
   body('user.password').isLength({ min: 8 }),
   body('user.passwordConfirmation').custom((value, { req }) => {
     if (value !== req.body.user.password) {
-      throw new Error('Password confirmation does not match password');
+      throw new Error('Passwords do not match');
     }
     return true;
   }),

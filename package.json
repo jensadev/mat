@@ -22,7 +22,10 @@
     "jw-paginate": "^1.0.4",
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
-    "sequelize": "^6.5.1"
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "sequelize": "^6.5.1",
+    "validator": "^13.5.2"
   },
   "devDependencies": {
     "chai": "^4.3.0",

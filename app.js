@@ -14,6 +14,8 @@ const dishesRouter = require('./routes/dishes');
 
 const app = express();
 
+require('./config/passport');
+
 app.use(cors({ origin: process.env.APP_ORIGIN }));
 // app.use(helmet());
 app.use(compression());
@@ -31,8 +33,28 @@ app.use('/api/users', usersRouter);
 app.use('/api/meals', mealsRouter);
 app.use('/api/dishes', dishesRouter);
 
-app.use(notFound);
-app.use(errorHandler);
+/// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+app.use(function (err, req, res, next) {
+  console.log(err.stack);
+
+  res.status(err.status || 500);
+
+  res.json({
+    errors: {
+      message: err.message,
+      error: err
+    }
+  });
+});
+
+// app.use(notFound);
+// app.use(errorHandler);
 // app.use((req, res, next) => {
 //   // eslint-disable-next-line no-undef
 //   next(createError(404));

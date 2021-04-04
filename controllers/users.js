@@ -3,10 +3,16 @@ const { validationResult } = require('express-validator');
 const { generateUserName } = require('../utils/username');
 const { hashPassword, matchPassword } = require('../utils/password');
 const { sign } = require('../utils/jwt');
+const passport = require('passport');
+const { errorFormatter } = require('../utils/error-formatter');
+// const validator = require('validator');
 
 module.exports.store = async (req, res) => {
   try {
-    validationResult(req).throw();
+    const errors = validationResult(req).formatWith(errorFormatter);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
     const existingUser = await User.findOne({
       where: { email: req.body.user.email }
@@ -25,7 +31,7 @@ module.exports.store = async (req, res) => {
     });
 
     if (user) {
-      if (user.dataValues.password) delete user.dataValues.password;
+      delete user.dataValues.password;
       delete user.dataValues.createdAt;
       delete user.dataValues.updatedAt;
       user.dataValues.token = await sign(user);
@@ -38,45 +44,37 @@ module.exports.store = async (req, res) => {
   }
 };
 
-module.exports.create = async (req, res) => {
-  console.table(req.body);
-  try {
-    validationResult(req).throw();
-
-    const user = await User.findOne({ where: { email: req.body.user.email } });
-
-    if (!user) {
-      res.status(401);
-      throw new Error('No User found');
-    }
-
-    //Check if password matches
-    const passwordMatch = await matchPassword(
-      user.password,
-      req.body.user.password
-    );
-
-    if (!passwordMatch) {
-      res.status(401);
-      throw new Error('Invalid password or email');
-    }
-
-    delete user.dataValues.password;
-    delete user.dataValues.createdAt;
-    delete user.dataValues.updatedAt;
-    const token = await sign({
-      id: user.dataValues.id,
-      email: user.dataValues.email,
-      handle: user.dataValues.handle
-    });
-
-    user.dataValues.token = token;
-
-    res.status(200).json({ user });
-  } catch (e) {
-    const status = res.statusCode ? res.statusCode : 500;
-    res.status(status).json({
-      errors: { body: ['Could not login user ', e.message || e.mapped()] }
-    });
+module.exports.create = async (req, res, next) => {
+  const errors = validationResult(req).formatWith(errorFormatter);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
   }
+
+  passport.authenticate(
+    'local',
+    { session: false },
+    async function (err, user, info) {
+      if (err) {
+        return next(err);
+      }
+
+      if (user) {
+        delete user.dataValues.password;
+        delete user.dataValues.createdAt;
+        delete user.dataValues.updatedAt;
+        const token = await sign({
+          id: user.dataValues.id,
+          email: user.dataValues.email,
+          handle: user.dataValues.handle
+        });
+
+        user.dataValues.token = token;
+        // user.token = user.generateJWT();
+        // return res.json({ user: user.toAuthJSON() });
+        res.status(200).json({ user });
+      } else {
+        return res.status(422).json(info);
+      }
+    }
+  )(req, res, next);
 };
