@@ -1,5 +1,35 @@
-const { User, Dish, User_Dish } = require('../models');
+const { User, Dish, Meal, User_Dish } = require('../models');
 const { validationResult } = require('express-validator');
+const sequelize = require('sequelize');
+
+module.exports.index = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDishes = await User_Dish.findAll({
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+
+    const dishes = [];
+    if (getDishes)
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues.Dish);
+      }
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
 
 module.exports.destroy = async (req, res) => {
   try {
@@ -84,5 +114,105 @@ module.exports.update = async (req, res) => {
     return res.status(422).json({
       errors: { body: ['Could not update dish', e.message || e.mapped()] }
     });
+  }
+};
+
+module.exports.top = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDishes = await Meal.findAll({
+      attributes: [[sequelize.fn('count', sequelize.col('dishId')), 'count']],
+      group: ['dishId'],
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ],
+      order: [[sequelize.literal('count'), 'DESC']],
+      limit: 10
+    });
+
+    const dishes = [];
+    if (getDishes) {
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues);
+      }
+    }
+
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
+
+module.exports.menu = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDishes = await User_Dish.findAll({
+      attributes: [],
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ],
+      order: [[sequelize.literal('rand()'), 'DESC']],
+      // order: [sequelize.fn('rand'), 'dishId'],
+      limit: 7
+    });
+
+    const dishes = [];
+    if (getDishes) {
+      for (let dish of getDishes) {
+        dishes.push(dish.dataValues);
+      }
+    }
+
+    res.status(200).json({ dishes });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
+  }
+};
+
+module.exports.suggest = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getDish = await User_Dish.findOne({
+      attributes: [],
+      where: { userId: user.id },
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ],
+      order: [[sequelize.literal('rand()'), 'DESC']],
+      // order: [sequelize.fn('rand'), 'dishId'],
+      limit: 7
+    });
+
+    const dish = getDish.dataValues.Dish;
+
+    res.status(200).json({ dish });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message] } });
   }
 };

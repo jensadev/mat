@@ -210,28 +210,28 @@ Example request body:
 
 Get users meals, paginated:
 ```
-GET /api/user/meals
-GET /api/user/meals?page=1
+GET /api/meals
+GET /api/meals?page=1
 ```
 
 Get users dishes:
 ```
-GET /api/users/dishes
+GET /api/dishes
 ```
 
 Get users top dishes:
 ```
-GET /api/users/dishes/top
+GET /api/dishes/top
 ```
 
 Get one of users dishes:
 ```
-GET /api/users/dishes/one
+GET /api/dishes/suggest
 ```
 
 GET a suggested week menu:
 ```
-GET /api/users/dishes/menu
+GET /api/dishes/menu
 ```
 
 ## Meals

@@ -5,6 +5,12 @@ const { authByToken } = require('../middleware/auth');
 
 const DishesController = require('../controllers/dishes');
 
+router.get('/', authByToken, DishesController.index);
+
+router.get('/top', authByToken, DishesController.top);
+router.get('/menu', authByToken, DishesController.menu);
+router.get('/suggest', authByToken, DishesController.suggest);
+
 router.patch(
   '/',
   body('dish.id').isInt(),

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/users');
-const { body, query } = require('express-validator');
-const { authByToken } = require('../middleware/auth');
+const { body } = require('express-validator');
 
 router.post(
   '/',
@@ -15,28 +14,13 @@ router.post(
     return true;
   }),
   UserController.store
-); //Store user
-// router.post('/users/login',UserController.loginUser)                //Login for existing user
-// router.get('/user', checkJwt, UserController.show); //Gets the currently logged-in user
-// router.patch('/user',authByToken,UserController.updateUserDetails)  //Updated user information for current user
+);
 
 router.post(
   '/login',
   body('user.email').isEmail().normalizeEmail(),
   body('user.password').isLength({ min: 8 }),
-  UserController.login
+  UserController.create
 );
-
-router.get(
-  '/meals',
-  query('page').isInt().optional({ nullable: true }),
-  authByToken,
-  UserController.meals
-);
-router.get('/dishes', authByToken, UserController.dishes);
-
-router.get('/dishes/top', authByToken, UserController.top);
-router.get('/dishes/menu', authByToken, UserController.menu);
-router.get('/dishes/one', authByToken, UserController.one);
 
 module.exports = router;

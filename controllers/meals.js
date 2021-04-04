@@ -1,5 +1,48 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
+const paginate = require('jw-paginate');
+
+module.exports.index = async (req, res) => {
+  try {
+    validationResult(req).throw();
+
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User id not valid');
+    }
+
+    const getMeals = await Meal.findAll({
+      attributes: ['id', 'date', 'typeId'],
+      where: { userId: user.id },
+      order: [
+        ['date', 'DESC'],
+        ['typeId', 'DESC']
+      ],
+      include: [
+        {
+          model: Dish,
+          attributes: ['name']
+        }
+      ]
+    });
+
+    const meals = [];
+    if (getMeals) {
+      for (let meal of getMeals) {
+        meals.push(meal.dataValues);
+      }
+    }
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 7;
+    const pager = paginate(meals.length, page, pageSize);
+    const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
+
+    res.status(200).json({ pager, pageOfItems });
+  } catch (e) {
+    res.status(422).json({ errors: { body: [e.message || e.mapped()] } });
+  }
+};
 
 module.exports.store = async (req, res) => {
   try {
