@@ -4,12 +4,21 @@
     "password": "password",
     "passwordConfirmation": "password confirmation",
     "validation": {
-      "password": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
-      "passwordConfirmation": "Passwords do not match",
+      "login": "Email or password",
+      "password": {
+        "strong": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+        "confirmation": "Passwords do not match",
+        "required": "Required"
+      },
       "email": {
         "invalid": "Invalid value",
-        "taken": "has already been taken"
+        "taken": "Has already been taken"
       }
     }
+  },
+  "error": {
+    "invalid": "Invalid value",
+    "unspecific": "Something went wrong.",
+    "404": "The page was not found."
   }
 }

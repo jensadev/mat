@@ -48,10 +48,6 @@ module.exports.store = async (req, res) => {
       .array()
       .map((err) => (extractedErrors[req.t(err.param)] = [req.t(err.msg)]));
     return res.status(422).json({
-      'req.language': req.language,
-      'req.i18n.language': req.i18n.language,
-      'req.i18n.languages': req.i18n.languages,
-      'req.i18n.languages[0]': req.i18n.languages[0],
       errors: extractedErrors
     });
   }
@@ -77,7 +73,7 @@ module.exports.create = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({
-      errors: { 'email or password': 'is invalid' }
+      errors: { [req.t('user.validation.login')]: req.t('error.invalid') }
     });
   }
 
@@ -104,7 +100,9 @@ module.exports.create = (req, res, next) => {
         // return res.json({ user: user.toAuthJSON() });
         res.status(200).json({ user });
       } else {
-        return res.status(422).json(info);
+        return res.status(422).json({
+          errors: { [req.t('user.validation.login')]: req.t('error.invalid') }
+        });
       }
     }
   )(req, res, next);

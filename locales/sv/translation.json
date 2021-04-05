@@ -4,12 +4,21 @@
     "password": "lösenord",
     "passwordConfirmation": "lösenordsbekräftelse",
     "validation": {
-      "password": "Lösenordet should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
-      "passwordConfirmation": "Lösenorden stämmer inte överens",
+      "login": "E-post eller lösenord",
+      "password": {
+        "strong": "Lösenordet should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+        "confirmation": "Lösenorden stämmer inte överens",
+        "required": "Obligatoriskt"
+      },
       "email": {
-        "invalid": "ogiltigt värde",
-        "taken": "används redan"
+        "invalid": "Ogiltigt värde",
+        "taken": "Används redan"
       }
     }
+  },
+  "error": {
+    "invalid": "Ogiltigt värde",
+    "unspecific": "Någonting gick fel.",
+    "404": "Sidan kan inte hittas."
   }
 }
