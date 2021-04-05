@@ -1,53 +1,77 @@
 const { User } = require('../models/');
-const { validationResult } = require('express-validator');
+const { validationResult, matchedData } = require('express-validator');
 const { generateUserName } = require('../utils/username');
-const { hashPassword, matchPassword } = require('../utils/password');
+const { hashPassword } = require('../utils/password');
 const { sign } = require('../utils/jwt');
 const passport = require('passport');
-const { errorFormatter } = require('../utils/error-formatter');
-// const validator = require('validator');
 
+// {
+//   "errors": {
+//       "email": [
+//           "has already been taken"
+//       ],
+//       "password": [
+//           "is too short (minimum is 8 characters)"
+//       ],
+//       "username": [
+//           "can't be blank",
+//           "is too short (minimum is 1 character)",
+//           "is too long (maximum is 20 characters)"
+//       ]
+//   }
+// }
 module.exports.store = async (req, res) => {
-  try {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
+  const errors = validationResult(req);
+  const bodyData = matchedData(req, { params: ['user.email'] });
 
+  if (bodyData.user.email) {
     const existingUser = await User.findOne({
       where: { email: req.body.user.email }
     });
 
     if (existingUser) {
-      throw new Error('User aldready exists');
+      errors.errors.unshift({
+        param: 'user.email',
+        msg: 'has already been taken'
+      });
     }
+  }
 
-    const password = await hashPassword(req.body.user.password);
-
-    const user = await User.create({
-      handle: generateUserName(),
-      password: password,
-      email: req.body.user.email
+  if (!errors.isEmpty()) {
+    const extractedErrors = {};
+    errors
+      .array()
+      .map(
+        (err) => (extractedErrors[err.param.replace('user.', '')] = [err.msg])
+      );
+    return res.status(422).json({
+      errors: extractedErrors
     });
+  }
 
-    if (user) {
-      delete user.dataValues.password;
-      delete user.dataValues.createdAt;
-      delete user.dataValues.updatedAt;
-      user.dataValues.token = await sign(user);
-      res.status(201).json({ user });
-    }
-  } catch (e) {
-    res.status(422).json({
-      errors: { body: ['Could not create user ', e.message || e.mapped()] }
-    });
+  const password = await hashPassword(req.body.user.password);
+
+  const user = await User.create({
+    handle: generateUserName(),
+    password: password,
+    email: req.body.user.email
+  });
+
+  if (user) {
+    delete user.dataValues.password;
+    delete user.dataValues.createdAt;
+    delete user.dataValues.updatedAt;
+    user.dataValues.token = await sign(user);
+    res.status(201).json({ user });
   }
 };
 
-module.exports.create = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
+module.exports.create = (req, res, next) => {
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
+    return res.status(422).json({
+      errors: { 'email or password': 'is invalid' }
+    });
   }
 
   passport.authenticate(
