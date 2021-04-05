@@ -1,5 +1,7 @@
 {
   "user": {
+    "user": "användare",
+    "missing": "saknas",
     "email": "e-post",
     "password": "lösenord",
     "passwordConfirmation": "lösenordsbekräftelse",
@@ -16,9 +18,25 @@
       }
     }
   },
+  "dish": {
+    "dish": "rätt",
+    "validation": {
+      "name": "En {dish.dish} består av minst fyra tecken."
+    }
+  },
+  "meal": {
+    "meal": "måltid",
+    "validation": {
+      
+    }
+  },
   "error": {
     "invalid": "Ogiltigt värde",
     "unspecific": "Någonting gick fel.",
-    "404": "Sidan kan inte hittas."
-  }
+    "404": "Sidan kan inte hittas.",
+    "date": "Felaktig datumformat",
+    "notfound": "Saknas"
+  },
+  "belongsto": "Hör inte till denna {user.user}",
+  "deleted": "{{what}} borttagen"
 }

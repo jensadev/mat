@@ -36,7 +36,7 @@ module.exports.store = async (req, res) => {
 
     if (existingUser) {
       errors.errors.unshift({
-        param: req.t('user.email'),
+        param: 'email',
         msg: req.t('user.validation.email.taken')
       });
     }
@@ -46,7 +46,7 @@ module.exports.store = async (req, res) => {
     const extractedErrors = {};
     errors
       .array()
-      .map((err) => (extractedErrors[req.t(err.param)] = [req.t(err.msg)]));
+      .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
     return res.status(422).json({
       errors: extractedErrors
     });
@@ -73,7 +73,10 @@ module.exports.create = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({
-      errors: { [req.t('user.validation.login')]: req.t('error.invalid') }
+      errors: {
+        email: [req.t('error.invalid')],
+        password: [req.t('error.invalid')]
+      }
     });
   }
 
@@ -101,7 +104,10 @@ module.exports.create = (req, res, next) => {
         res.status(200).json({ user });
       } else {
         return res.status(422).json({
-          errors: { [req.t('user.validation.login')]: req.t('error.invalid') }
+          errors: {
+            email: [req.t('error.invalid')],
+            password: [req.t('error.invalid')]
+          }
         });
       }
     }

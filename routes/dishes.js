@@ -13,15 +13,21 @@ router.get('/suggest', authByToken, DishesController.suggest);
 
 router.patch(
   '/',
-  body('dish.id').isInt(),
-  body('dish.name').not().isEmpty().trim().escape(),
+  body('dish.id').isInt().withMessage('error.invalid'),
+  body('dish.name')
+    .not()
+    .isEmpty()
+    .isLength({ min: 4 })
+    .trim()
+    .escape()
+    .withMessage('dish.validation.name'),
   authByToken,
   DishesController.update
 );
 
 router.delete(
   '/:id',
-  param('id').isInt(),
+  param('id').isInt().withMessage('error.invalid'),
   authByToken,
   DishesController.destroy
 );

@@ -1,21 +1,3 @@
 {
-  "e-post": "e-post",
-  "används redan": "används redan",
-  "Invalid value": "Invalid value",
-  "Används redan": "Används redan",
-  "user": {
-    "validation": {
-      "login": "user.validation.login",
-      "loginerror": {
-        "invalid": "user.validation.loginerror.invalid"
-      },
-      "login error": {
-        "invalid": "user.validation.login error.invalid"
-      }
-    }
-  },
-  "error": {
-    "invalid": "error.invalid"
-  },
-  "[object Object]": "[object Object]"
+  "Används redan": "Används redan"
 }
