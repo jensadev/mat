@@ -1,0 +1,15 @@
+{
+  "user": {
+    "email": "email",
+    "password": "password",
+    "passwordConfirmation": "password confirmation",
+    "validation": {
+      "password": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+      "passwordConfirmation": "Passwords do not match",
+      "email": {
+        "invalid": "Invalid value",
+        "taken": "has already been taken"
+      }
+    }
+  }
+}

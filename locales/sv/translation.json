@@ -1,0 +1,15 @@
+{
+  "user": {
+    "email": "e-post",
+    "password": "lösenord",
+    "passwordConfirmation": "lösenordsbekräftelse",
+    "validation": {
+      "password": "Lösenordet should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+      "passwordConfirmation": "Lösenorden stämmer inte överens",
+      "email": {
+        "invalid": "ogiltigt värde",
+        "taken": "används redan"
+      }
+    }
+  }
+}

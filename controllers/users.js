@@ -20,19 +20,24 @@ const passport = require('passport');
 //       ]
 //   }
 // }
+// const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+//   // Build your resulting errors however you want! String, object, whatever - it works!
+//   return `${location}[${param}]: ${msg}`;
+// };
+
 module.exports.store = async (req, res) => {
   const errors = validationResult(req);
   const bodyData = matchedData(req, { params: ['user.email'] });
 
-  if (bodyData.user.email) {
+  if (bodyData.user != 'undefined' || bodyData.user.email != 'undefined') {
     const existingUser = await User.findOne({
       where: { email: req.body.user.email }
     });
 
     if (existingUser) {
       errors.errors.unshift({
-        param: 'user.email',
-        msg: 'has already been taken'
+        param: req.t('user.email'),
+        msg: req.t('user.validation.email.taken')
       });
     }
   }
@@ -41,10 +46,12 @@ module.exports.store = async (req, res) => {
     const extractedErrors = {};
     errors
       .array()
-      .map(
-        (err) => (extractedErrors[err.param.replace('user.', '')] = [err.msg])
-      );
+      .map((err) => (extractedErrors[req.t(err.param)] = [req.t(err.msg)]));
     return res.status(422).json({
+      'req.language': req.language,
+      'req.i18n.language': req.i18n.language,
+      'req.i18n.languages': req.i18n.languages,
+      'req.i18n.languages[0]': req.i18n.languages[0],
       errors: extractedErrors
     });
   }

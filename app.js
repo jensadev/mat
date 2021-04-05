@@ -7,15 +7,40 @@ const logger = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 // const helmet = require('helmet')
-const { notFound, errorHandler } = require('./middleware/errorHandler');
+// const { notFound, errorHandler } = require('./middleware/errorHandler');
 const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
 const dishesRouter = require('./routes/dishes');
-
+const i18next = require('i18next');
+const middleware = require('i18next-http-middleware');
+const Backend = require('i18next-fs-backend');
 const app = express();
 
 require('./config/passport');
 
+i18next
+  .use(Backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    // debug: true,
+    // preload: ['en', 'se'],
+    backend: {
+      // eslint-disable-next-line no-path-concat
+      loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json',
+      // eslint-disable-next-line no-path-concat
+      addPath: __dirname + '/locales/{{lng}}/{{ns}}.missing.json'
+    },
+    fallbackLng: 'en',
+    // nonExplicitSupportedLngs: true,
+    // supportedLngs: ['en', 'de'],
+    load: 'languageOnly',
+    saveMissing: true
+  });
+app.use(
+  middleware.handle(i18next, {
+    ignoreRoutes: ['/foo'] // or function(req, res, options, i18next) { /* return true to ignore */ }
+  })
+);
 app.use(cors({ origin: process.env.APP_ORIGIN }));
 // app.use(helmet());
 app.use(compression());
