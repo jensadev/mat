@@ -21,7 +21,7 @@
   "dish": {
     "dish": "dish",
     "validation": {
-      "name": "A {dish.dish} consists of at least four letters."
+      "name": "A dish consists of at least four letters"
     }
   },
   "meal": {
@@ -37,6 +37,6 @@
     "date": "Invalid date format",
     "notfound": "Not found"
   },
-  "belongsto": "Does not belong to {user.user}",
+  "belongsto": "Does not belong to {{owner}}",
   "deleted": "{{what}} deleted"
 }

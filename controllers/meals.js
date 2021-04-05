@@ -116,7 +116,7 @@ module.exports.destroy = async (req, res) => {
   if (user.id != meal.userId) {
     res.status(403).json({
       errors: {
-        meal: req.t('belongsto')
+        meal: req.t('belongsto', { owner: req.t('user.user') })
       }
     });
   }
@@ -151,7 +151,7 @@ module.exports.update = async (req, res) => {
   if (user.id != meal.userId) {
     res.status(403).json({
       errors: {
-        meal: req.t('belongsto')
+        meal: req.t('belongsto', { owner: req.t('user.user') })
       }
     });
   }

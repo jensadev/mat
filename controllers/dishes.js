@@ -44,7 +44,7 @@ module.exports.destroy = async (req, res) => {
 
   let dish = await Dish.findByPk(req.params.id);
   if (!dish) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         dish: req.t('error.notfound')
       }
@@ -58,9 +58,9 @@ module.exports.destroy = async (req, res) => {
   });
 
   if (!userHasDish) {
-    res.status(403).json({
+    return res.status(403).json({
       errors: {
-        dish: req.t('belongsto')
+        dish: req.t('belongsto', { owner: req.t('user.user') })
       }
     });
   }

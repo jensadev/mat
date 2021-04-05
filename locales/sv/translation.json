@@ -21,7 +21,7 @@
   "dish": {
     "dish": "rätt",
     "validation": {
-      "name": "En {dish.dish} består av minst fyra tecken."
+      "name": "En rätt måste vara minst fyra tecken lång"
     }
   },
   "meal": {
@@ -37,6 +37,6 @@
     "date": "Felaktig datumformat",
     "notfound": "Saknas"
   },
-  "belongsto": "Hör inte till denna {user.user}",
+  "belongsto": "Hör inte till denna {{owner}}",
   "deleted": "{{what}} borttagen"
 }
