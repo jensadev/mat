@@ -3,6 +3,17 @@ const router = express.Router();
 const UserController = require('../controllers/users');
 const { body } = require('express-validator');
 
+router.get('/:pid', (req, res) => {
+  res.json({
+    profile: {
+      username: 'jake',
+      bio: 'I work at statefarm',
+      image: 'https://static.productionready.io/images/smiley-cyrus.jpg',
+      following: false
+    }
+  });
+});
+
 router.post(
   '/',
   body('user.email')

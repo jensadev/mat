@@ -46,7 +46,8 @@ module.exports.index = async (req, res) => {
   }
   const page = parseInt(req.query.page) || 1;
   const pageSize = 7;
-  const pager = paginate(meals.length, page, pageSize);
+  const maxPages = 5;
+  const pager = paginate(meals.length, page, pageSize, maxPages);
   const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
 
   res.status(200).json({ pager, pageOfItems });

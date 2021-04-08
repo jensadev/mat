@@ -36,7 +36,7 @@ module.exports.store = async (req, res) => {
 
     if (existingUser) {
       errors.errors.unshift({
-        param: 'email',
+        param: 'users.email',
         msg: req.t('user.validation.email.taken')
       });
     }
@@ -70,6 +70,7 @@ module.exports.store = async (req, res) => {
 };
 
 module.exports.create = (req, res, next) => {
+  console.table(req.language);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({
@@ -83,7 +84,7 @@ module.exports.create = (req, res, next) => {
   passport.authenticate(
     'local',
     { session: false },
-    async function (err, user, info) {
+    async function (err, user) {
       if (err) {
         return next(err);
       }

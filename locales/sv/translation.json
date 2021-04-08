@@ -8,7 +8,7 @@
     "validation": {
       "login": "E-post eller lösenord",
       "password": {
-        "strong": "Lösenordet should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+        "strong": "Lösenordet behöver vara minst 8 tecken långt och innehålla minst en stor bokstav(A), en siffra(3) och ett övrigt tecken(+-#!$&@)",
         "confirmation": "Lösenorden stämmer inte överens",
         "required": "Obligatoriskt"
       },
