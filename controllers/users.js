@@ -37,7 +37,7 @@ module.exports.store = async (req, res) => {
     if (existingUser) {
       errors.errors.unshift({
         param: 'users.email',
-        msg: req.t('user.validation.email.taken')
+        msg: 'user.validation.email.taken'
       });
     }
   }

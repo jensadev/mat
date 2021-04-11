@@ -1,6 +1,7 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
 const paginate = require('jw-paginate');
+const sequelize = require('sequelize');
 
 module.exports.index = async (req, res) => {
   const errors = validationResult(req);
@@ -27,8 +28,9 @@ module.exports.index = async (req, res) => {
     attributes: ['id', 'date', 'typeId'],
     where: { userId: user.id },
     order: [
-      ['date', 'DESC'],
-      ['typeId', 'DESC']
+      // ['date', 'DESC'],
+      [sequelize.fn('date', sequelize.col('date')), 'DESC'],
+      ['typeId', 'ASC']
     ],
     include: [
       {
