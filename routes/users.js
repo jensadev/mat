@@ -1,18 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/users');
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
+const { authByToken } = require('../middleware/auth');
 
-router.get('/:pid', (req, res) => {
-  res.json({
-    profile: {
-      username: 'jake',
-      bio: 'I work at statefarm',
-      image: 'https://static.productionready.io/images/smiley-cyrus.jpg',
-      following: false
-    }
-  });
-});
+router.get('/', authByToken, UserController.index);
+
+router.patch(
+  '/',
+  body('user.family')
+    .isBoolean()
+    .optional({ nullable: true })
+    .withMessage('error.invalid'),
+  body('user.public')
+    .isBoolean()
+    .optional({ nullable: true })
+    .withMessage('error.invalid'),
+  body('user.bio').trim().escape().optional({ nullable: true }),
+  authByToken,
+  UserController.update
+);
+
+router.get(
+  '/:id',
+  param('id').isInt().withMessage('error.invalid'),
+  authByToken,
+  UserController.show
+);
 
 router.post(
   '/',

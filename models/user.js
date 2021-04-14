@@ -22,7 +22,21 @@ module.exports = (sequelize, DataTypes) => {
       // sub: { type: DataTypes.STRING, allowNull: false, unique: true },
       handle: { type: DataTypes.STRING, allowNull: false, unique: true },
       email: { type: DataTypes.STRING, allowNull: false, unique: true },
-      password: { type: DataTypes.STRING, allowNull: false }
+      password: { type: DataTypes.STRING, allowNull: false },
+      family: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: 0
+      },
+      public: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+        defaultValue: 0
+      },
+      bio: {
+        type: DataTypes.TEXT,
+        allowNull: true
+      }
     },
     {
       sequelize,

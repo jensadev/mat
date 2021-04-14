@@ -27,6 +27,20 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      family: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+      },
+      public: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false
+      },
+      bio: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -175,6 +175,5 @@ module.exports.update = async (req, res) => {
   const userId = user.id;
 
   const updatedMeal = await meal.update({ date, typeId, dishId, userId });
-
   res.status(200).json({ updatedMeal });
 };

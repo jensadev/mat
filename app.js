@@ -25,10 +25,8 @@ i18next
     // debug: true,
     // preload: ['en', 'se'],
     backend: {
-      // eslint-disable-next-line no-path-concat
-      loadPath: __dirname + '/locales/{{lng}}/{{ns}}.json',
-      // eslint-disable-next-line no-path-concat
-      addPath: __dirname + '/locales/{{lng}}/{{ns}}.missing.json'
+      loadPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.json'),
+      addPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.missing.json')
     },
     fallbackLng: 'en',
     // nonExplicitSupportedLngs: true,
@@ -36,11 +34,7 @@ i18next
     load: 'languageOnly',
     saveMissing: true
   });
-app.use(
-  middleware.handle(i18next, {
-    ignoreRoutes: ['/foo'] // or function(req, res, options, i18next) { /* return true to ignore */ }
-  })
-);
+app.use(middleware.handle(i18next));
 app.use(cors({ origin: process.env.APP_ORIGIN }));
 // app.use(helmet());
 app.use(compression());

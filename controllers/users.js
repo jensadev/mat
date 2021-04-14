@@ -114,3 +114,81 @@ module.exports.create = (req, res, next) => {
     }
   )(req, res, next);
 };
+
+module.exports.index = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  if (!user) {
+    res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
+  delete user.dataValues.password;
+  delete user.dataValues.createdAt;
+  delete user.dataValues.updatedAt;
+  res.status(200).json({ user });
+};
+
+module.exports.show = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const extractedErrors = {};
+    errors
+      .array()
+      .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
+    return res.status(422).json({
+      errors: extractedErrors
+    });
+  }
+
+  const user = await User.findOne({
+    where: { id: req.params.id, public: true }
+  });
+  if (!user) {
+    res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
+  delete user.dataValues.email;
+  delete user.dataValues.public;
+  delete user.dataValues.family;
+  delete user.dataValues.password;
+  delete user.dataValues.createdAt;
+  delete user.dataValues.updatedAt;
+  res.status(200).json({ user });
+};
+
+module.exports.update = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const extractedErrors = {};
+    errors
+      .array()
+      .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
+    return res.status(422).json({
+      errors: extractedErrors
+    });
+  }
+
+  const user = await User.findByPk(req.user.id);
+  if (!user) {
+    res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
+
+  // const email = req.body.user.email ? req.body.user.email : user.email;
+  const family = req.body.user.family && user.family ? false : true;
+  const public = req.body.user.public && user.public ? false : true;
+  const bio = req.body.user.bio ? req.body.user.bio : user.bio;
+
+  console.log(family);
+
+  const updatedUser = await user.update({ family, public, bio });
+  res.status(200).json({ updatedUser });
+};
