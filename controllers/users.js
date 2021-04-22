@@ -70,14 +70,14 @@ module.exports.store = async (req, res) => {
 };
 
 module.exports.create = (req, res, next) => {
-  console.table(req.language);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    const extractedErrors = {};
+    errors
+      .array()
+      .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
     return res.status(422).json({
-      errors: {
-        email: [req.t('error.invalid')],
-        password: [req.t('error.invalid')]
-      }
+      errors: extractedErrors
     });
   }
 
