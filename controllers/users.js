@@ -29,14 +29,14 @@ module.exports.store = async (req, res) => {
   const errors = validationResult(req);
   const bodyData = matchedData(req, { params: ['user.email'] });
 
-  if (bodyData.user != 'undefined' || bodyData.user.email != 'undefined') {
+  if (bodyData.user !== 'undefined' || bodyData.user.email !== 'undefined') {
     const existingUser = await User.findOne({
       where: { email: req.body.user.email }
     });
 
     if (existingUser) {
       errors.errors.unshift({
-        param: 'users.email',
+        param: 'user.email',
         msg: 'user.validation.email.taken'
       });
     }
