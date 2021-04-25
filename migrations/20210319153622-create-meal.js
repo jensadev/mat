@@ -25,12 +25,6 @@ module.exports = {
       typeId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'Mealtypes',
-          key: 'id',
-          as: 'typeId'
-        }
       },
       userId: {
         allowNull: false,
