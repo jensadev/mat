@@ -15,7 +15,9 @@ module.exports.index = async (req, res) => {
     });
   }
 
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
   if (!user) {
     res.status(404).json({
       errors: {
@@ -25,12 +27,12 @@ module.exports.index = async (req, res) => {
   }
 
   const getMeals = await Meal.findAll({
-    attributes: ['id', 'date', 'typeId'],
+    attributes: ['id', 'date', 'type'],
     where: { userId: user.id },
     order: [
       // ['date', 'DESC'],
       [sequelize.fn('date', sequelize.col('date')), 'DESC'],
-      ['typeId', 'ASC']
+      ['type', 'DESC']
     ],
     include: [
       {
@@ -67,7 +69,9 @@ module.exports.store = async (req, res) => {
     });
   }
 
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
   if (!user) {
     res.status(404).json({
       errors: {
@@ -88,9 +92,10 @@ module.exports.store = async (req, res) => {
     date: req.body.meal.date,
     userId: user.id,
     dishId: dish.id,
-    typeId: req.body.meal.typeId
+    type: req.body.meal.type
   });
-
+  delete meal.dataValues.createdAt;
+  delete meal.dataValues.updatedAt;
   res.status(201).json({ meal });
 };
 
@@ -106,26 +111,38 @@ module.exports.destroy = async (req, res) => {
     });
   }
 
-  let meal = await Meal.findByPk(req.params.id);
+  let meal = await Meal.findByPk(req.params.id, {
+    attributes: ['id', 'userId']
+  });
   if (!meal) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         meal: req.t('error.notfound')
       }
     });
   }
 
-  const user = await User.findByPk(req.user.id);
-  if (user.id != meal.userId) {
-    res.status(403).json({
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
+  if (!user) {
+    return res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
+
+  if (user.id !== meal.userId) {
+    return res.status(403).json({
       errors: {
         meal: req.t('belongsto', { owner: req.t('user.user') })
       }
     });
   }
 
-  await Meal.destroy({ where: { id: req.params.id } });
-  res.status(200).json({
+  await meal.destroy();
+  return res.status(200).json({
     message: req.t('deleted', { what: req.t('meal.meal') })
   });
 };
@@ -144,15 +161,26 @@ module.exports.update = async (req, res) => {
 
   let meal = await Meal.findByPk(req.body.meal.id);
   if (!meal) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         meal: req.t('error.notfound')
       }
     });
   }
-  const user = await User.findByPk(req.user.id);
-  if (user.id != meal.userId) {
-    res.status(403).json({
+
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
+  if (!user) {
+    return res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
+
+  if (user.id !== meal.userId) {
+    return res.status(403).json({
       errors: {
         meal: req.t('belongsto', { owner: req.t('user.user') })
       }
@@ -168,12 +196,14 @@ module.exports.update = async (req, res) => {
   });
 
   const date = req.body.meal.date ? req.body.meal.date : meal.date;
-  const typeId = parseInt(req.body.meal.typeId)
-    ? parseInt(req.body.meal.typeId)
-    : meal.typeId;
+  const type = parseInt(req.body.meal.type)
+    ? parseInt(req.body.meal.type)
+    : meal.type;
   const dishId = dish.id;
   const userId = user.id;
 
-  const updatedMeal = await meal.update({ date, typeId, dishId, userId });
+  const updatedMeal = await meal.update({ date, type, dishId, userId });
+  delete updatedMeal.dataValues.createdAt;
+  delete updatedMeal.dataValues.updatedAt;
   res.status(200).json({ updatedMeal });
 };

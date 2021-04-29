@@ -31,7 +31,8 @@ module.exports.store = async (req, res) => {
 
   if (bodyData.user !== 'undefined' || bodyData.user.email !== 'undefined') {
     const existingUser = await User.findOne({
-      where: { email: req.body.user.email }
+      where: { email: req.body.user.email },
+      attributes: ['email']
     });
 
     if (existingUser) {
@@ -116,7 +117,11 @@ module.exports.create = (req, res, next) => {
 };
 
 module.exports.index = async (req, res) => {
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: {
+      exclude: ['password', 'createdAt', 'updatedAt']
+    }
+  });
   if (!user) {
     res.status(404).json({
       errors: {
@@ -124,9 +129,9 @@ module.exports.index = async (req, res) => {
       }
     });
   }
-  delete user.dataValues.password;
-  delete user.dataValues.createdAt;
-  delete user.dataValues.updatedAt;
+  // delete user.dataValues.password;
+  // delete user.dataValues.createdAt;
+  // delete user.dataValues.updatedAt;
   res.status(200).json({ user });
 };
 
@@ -143,22 +148,23 @@ module.exports.show = async (req, res) => {
   }
 
   const user = await User.findOne({
-    where: { id: req.params.id, public: true }
+    where: { id: req.params.id, public: true },
+    attributes: ['handle', 'bio', 'family']
   });
+
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
     });
   }
-  delete user.dataValues.email;
-  delete user.dataValues.public;
-  delete user.dataValues.family;
-  delete user.dataValues.password;
-  delete user.dataValues.createdAt;
-  delete user.dataValues.updatedAt;
-  res.status(200).json({ user });
+  // delete user.dataValues.email;
+  // delete user.dataValues.public;
+  // delete user.dataValues.password;
+  // delete user.dataValues.createdAt;
+  // delete user.dataValues.updatedAt;
+  return res.status(200).json({ user });
 };
 
 module.exports.update = async (req, res) => {
@@ -173,7 +179,9 @@ module.exports.update = async (req, res) => {
     });
   }
 
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id', 'family', 'public', 'bio']
+  });
   if (!user) {
     res.status(404).json({
       errors: {
@@ -186,8 +194,6 @@ module.exports.update = async (req, res) => {
   const family = req.body.user.family && user.family ? false : true;
   const public = req.body.user.public && user.public ? false : true;
   const bio = req.body.user.bio ? req.body.user.bio : user.bio;
-
-  console.log(family);
 
   const updatedUser = await user.update({ family, public, bio });
   res.status(200).json({ updatedUser });

@@ -15,14 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       Meal.belongsTo(models.Dish, {
         foreignKey: 'dishId'
       });
-      Meal.belongsTo(models.Mealtype, {
-        foreignKey: 'typeId'
-      });
     }
   }
   Meal.init(
     {
-      date: DataTypes.DATE
+      date: DataTypes.DATE,
+      type: DataTypes.INTEGER
     },
     {
       sequelize,

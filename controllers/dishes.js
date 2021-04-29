@@ -3,7 +3,9 @@ const { validationResult } = require('express-validator');
 const sequelize = require('sequelize');
 
 module.exports.index = async (req, res) => {
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
   if (!user) {
     res.status(404).json({
       errors: {
@@ -13,7 +15,9 @@ module.exports.index = async (req, res) => {
   }
 
   const getDishes = await User_Dish.findAll({
+    attributes: [],
     where: { userId: user.id },
+    order: [['updatedAt', 'DESC']],
     include: [
       {
         model: Dish,
@@ -42,7 +46,10 @@ module.exports.destroy = async (req, res) => {
     });
   }
 
-  let dish = await Dish.findByPk(req.params.id);
+  let dish = await Dish.findByPk(req.params.id, {
+    attributes: ['id']
+  });
+
   if (!dish) {
     return res.status(404).json({
       errors: {
@@ -51,7 +58,17 @@ module.exports.destroy = async (req, res) => {
     });
   }
 
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
+
+  if (!user) {
+    res.status(404).json({
+      errors: {
+        user: req.t('error.notfound')
+      }
+    });
+  }
 
   const userHasDish = await User_Dish.findOne({
     where: { userId: user.id, dishId: dish.id }
@@ -70,13 +87,11 @@ module.exports.destroy = async (req, res) => {
   });
 
   if (usersHasDish.length > 1) {
-    await User_Dish.destroy({ where: { dishId: dish.id, userId: user.id } });
+    await userHasDish.destroy();
   } else {
     if (usersHasDish[0].dataValues.userId === user.id) {
-      await User_Dish.destroy({
-        where: { dishId: dish.id, userId: user.id }
-      });
-      await Dish.destroy({ where: { id: dish.id } });
+      await userHasDish.destroy();
+      await dish.destroy();
     }
   }
 
@@ -107,7 +122,9 @@ module.exports.update = async (req, res) => {
     });
   }
 
-  const user = await User.findByPk(req.user.id);
+  const user = await User.findByPk(req.user.id, {
+    attributes: ['id']
+  });
 
   const usersHasDish = await User_Dish.findAll({
     where: { dishId: dish.id }
@@ -121,6 +138,16 @@ module.exports.update = async (req, res) => {
       where: { userId: user.id, dishId: newDish.id }
     });
     await User_Dish.destroy({ where: { dishId: dish.id, userId: user.id } });
+
+    await Meal.findAll({
+      where: { dishId: dish.id, userId: user.id },
+      attributes: ['dishId']
+    }).success((instances) => {
+      instances.forEach((instance) => {
+        instance.updateAttributes({ dishId: newDish.id });
+      });
+    });
+
     res.status(200).json({ newDish });
   } else {
     if (usersHasDish[0].dataValues.userId === user.id) {

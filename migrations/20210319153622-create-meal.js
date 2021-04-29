@@ -12,6 +12,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      type: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       dishId: {
         allowNull: false,
         type: Sequelize.INTEGER,
@@ -20,16 +24,6 @@ module.exports = {
           model: 'Dishes',
           key: 'id',
           as: 'dishId'
-        }
-      },
-      typeId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        onDelete: 'CASCADE',
-        references: {
-          model: 'Mealtypes',
-          key: 'id',
-          as: 'typeId'
         }
       },
       userId: {
@@ -51,6 +45,9 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addIndex('Meals', ['userId']);
+    await queryInterface.addIndex('Meals', ['userId', 'type']);
+    await queryInterface.addIndex('Meals', ['userId', 'date']);
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Meals');

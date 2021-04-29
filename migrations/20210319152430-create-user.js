@@ -29,12 +29,12 @@ module.exports = {
       },
       family: {
         type: Sequelize.BOOLEAN,
-        allowNull: true,
+        allowNull: false,
         defaultValue: false
       },
       public: {
         type: Sequelize.BOOLEAN,
-        allowNull: true,
+        allowNull: false,
         defaultValue: false
       },
       bio: {
@@ -50,6 +50,8 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.addIndex('Users', ['email']);
+    await queryInterface.addIndex('Users', ['public']);
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Users');
