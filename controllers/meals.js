@@ -19,7 +19,7 @@ module.exports.index = async (req, res) => {
     attributes: ['id']
   });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -73,7 +73,7 @@ module.exports.store = async (req, res) => {
     attributes: ['id']
   });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -96,7 +96,7 @@ module.exports.store = async (req, res) => {
   });
   delete meal.dataValues.createdAt;
   delete meal.dataValues.updatedAt;
-  res.status(201).json({ meal });
+  return res.status(201).json({ meal });
 };
 
 module.exports.destroy = async (req, res) => {
@@ -205,5 +205,5 @@ module.exports.update = async (req, res) => {
   const updatedMeal = await meal.update({ date, type, dishId, userId });
   delete updatedMeal.dataValues.createdAt;
   delete updatedMeal.dataValues.updatedAt;
-  res.status(200).json({ updatedMeal });
+  return res.status(200).json({ updatedMeal });
 };

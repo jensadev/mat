@@ -7,7 +7,7 @@ module.exports.index = async (req, res) => {
     attributes: ['id']
   });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -31,7 +31,7 @@ module.exports.index = async (req, res) => {
     for (let dish of getDishes) {
       dishes.push(dish.dataValues.Dish);
     }
-  res.status(200).json({ dishes });
+  return res.status(200).json({ dishes });
 };
 
 module.exports.destroy = async (req, res) => {
@@ -63,7 +63,7 @@ module.exports.destroy = async (req, res) => {
   });
 
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -95,7 +95,7 @@ module.exports.destroy = async (req, res) => {
     }
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     message: req.t('deleted', { what: req.t('dish.dish') })
   });
 };
@@ -115,7 +115,7 @@ module.exports.update = async (req, res) => {
   let dish = await Dish.findByPk(req.body.dish.id);
 
   if (!dish) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         dish: req.t('error.notfound')
       }
@@ -148,12 +148,12 @@ module.exports.update = async (req, res) => {
       });
     });
 
-    res.status(200).json({ newDish });
+    return res.status(200).json({ newDish });
   } else {
     if (usersHasDish[0].dataValues.userId === user.id) {
       const name = req.body.dish.name ? req.body.dish.name : dish.name;
       const updatedDish = await dish.update({ name });
-      res.status(200).json({ updatedDish });
+      return res.status(200).json({ updatedDish });
     }
   }
 };
@@ -161,7 +161,7 @@ module.exports.update = async (req, res) => {
 module.exports.top = async (req, res) => {
   const user = await User.findByPk(req.user.id);
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -189,13 +189,13 @@ module.exports.top = async (req, res) => {
     }
   }
 
-  res.status(200).json({ dishes });
+  return res.status(200).json({ dishes });
 };
 
 module.exports.menu = async (req, res) => {
   const user = await User.findByPk(req.user.id);
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -229,7 +229,7 @@ module.exports.menu = async (req, res) => {
 module.exports.suggest = async (req, res) => {
   const user = await User.findByPk(req.user.id);
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }

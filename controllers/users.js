@@ -66,7 +66,7 @@ module.exports.store = async (req, res) => {
     delete user.dataValues.createdAt;
     delete user.dataValues.updatedAt;
     user.dataValues.token = await sign(user);
-    res.status(201).json({ user });
+    return res.status(201).json({ user });
   }
 };
 
@@ -103,7 +103,7 @@ module.exports.create = (req, res, next) => {
         user.dataValues.token = token;
         // user.token = user.generateJWT();
         // return res.json({ user: user.toAuthJSON() });
-        res.status(200).json({ user });
+        return res.status(200).json({ user });
       } else {
         return res.status(422).json({
           errors: {
@@ -123,7 +123,7 @@ module.exports.index = async (req, res) => {
     }
   });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -132,7 +132,7 @@ module.exports.index = async (req, res) => {
   // delete user.dataValues.password;
   // delete user.dataValues.createdAt;
   // delete user.dataValues.updatedAt;
-  res.status(200).json({ user });
+  return res.status(200).json({ user });
 };
 
 module.exports.show = async (req, res) => {
@@ -183,7 +183,7 @@ module.exports.update = async (req, res) => {
     attributes: ['id', 'family', 'public', 'bio']
   });
   if (!user) {
-    res.status(404).json({
+    return res.status(404).json({
       errors: {
         user: req.t('error.notfound')
       }
@@ -196,5 +196,5 @@ module.exports.update = async (req, res) => {
   const bio = req.body.user.bio ? req.body.user.bio : user.bio;
 
   const updatedUser = await user.update({ family, public, bio });
-  res.status(200).json({ updatedUser });
+  return res.status(200).json({ updatedUser });
 };
