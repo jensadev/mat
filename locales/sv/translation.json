@@ -1,42 +1,40 @@
 {
-  "user": {
-    "user": "användare",
-    "missing": "saknas",
-    "email": "e-post",
-    "password": "lösenord",
-    "passwordConfirmation": "lösenordsbekräftelse",
-    "validation": {
-      "login": "E-post eller lösenord",
-      "password": {
-        "strong": "Lösenordet behöver vara minst 8 tecken långt och innehålla minst en stor bokstav(A), en siffra(3) och ett övrigt tecken(+-#!$&@)",
-        "confirmation": "Lösenorden stämmer inte överens",
-        "required": "Obligatoriskt"
-      },
-      "email": {
+    "user": {
+        "user": "användare",
+        "missing": "saknas",
+        "email": "e-post",
+        "password": "lösenord",
+        "passwordConfirmation": "lösenordsbekräftelse",
+        "validation": {
+            "login": "E-post eller lösenord",
+            "password": {
+                "strong": "Lösenordet behöver vara minst 8 tecken långt och innehålla minst en stor bokstav(A), en siffra(3) och ett övrigt tecken(+-#!$&@)",
+                "confirmation": "Lösenorden stämmer inte överens",
+                "required": "Obligatoriskt"
+            },
+            "email": {
+                "invalid": "Ogiltigt värde",
+                "taken": "Används redan"
+            }
+        }
+    },
+    "dish": {
+        "dish": "rätt",
+        "validation": {
+            "name": "En rätt måste vara minst fyra tecken lång"
+        }
+    },
+    "meal": {
+        "meal": "måltid",
+        "validation": {}
+    },
+    "error": {
         "invalid": "Ogiltigt värde",
-        "taken": "Används redan"
-      }
-    }
-  },
-  "dish": {
-    "dish": "rätt",
-    "validation": {
-      "name": "En rätt måste vara minst fyra tecken lång"
-    }
-  },
-  "meal": {
-    "meal": "måltid",
-    "validation": {
-      
-    }
-  },
-  "error": {
-    "invalid": "Ogiltigt värde",
-    "unspecific": "Någonting gick fel.",
-    "404": "Sidan kan inte hittas.",
-    "date": "Felaktig datumformat",
-    "notfound": "Saknas"
-  },
-  "belongsto": "Hör inte till denna {{owner}}",
-  "deleted": "{{what}} borttagen"
+        "unspecific": "Någonting gick fel.",
+        "404": "Sidan kan inte hittas.",
+        "date": "Felaktig datumformat",
+        "notfound": "Saknas"
+    },
+    "belongsto": "Hör inte till denna {{owner}}",
+    "deleted": "{{what}} borttagen"
 }

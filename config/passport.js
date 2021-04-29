@@ -20,25 +20,28 @@ const { matchPassword } = require('../utils/password');
 // );
 
 passport.use(
-  new LocalStrategy(
-    {
-      usernameField: 'user[email]',
-      passwordField: 'user[password]'
-    },
-    function (email, password, done) {
-      User.findOne({ where: { email: email } })
-        .then(async function (user) {
-          if (!user) {
-            return done(null, false, 'passport');
-          }
-          const passwordMatch = await matchPassword(user.password, password);
-          if (!passwordMatch) {
-            return done(null, false, 'passport');
-          }
+    new LocalStrategy(
+        {
+            usernameField: 'user[email]',
+            passwordField: 'user[password]'
+        },
+        function (email, password, done) {
+            User.findOne({ where: { email: email } })
+                .then(async function (user) {
+                    if (!user) {
+                        return done(null, false, 'passport');
+                    }
+                    const passwordMatch = await matchPassword(
+                        user.password,
+                        password
+                    );
+                    if (!passwordMatch) {
+                        return done(null, false, 'passport');
+                    }
 
-          return done(null, user);
-        })
-        .catch(done);
-    }
-  )
+                    return done(null, user);
+                })
+                .catch(done);
+        }
+    )
 );
