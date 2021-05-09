@@ -1,4 +1,4 @@
-const { User } = require('../models/');
+const { User, Meal } = require('../models/');
 const { validationResult, matchedData } = require('express-validator');
 const { generateUserName } = require('../utils/username');
 const { hashPassword } = require('../utils/password');
@@ -103,6 +103,22 @@ module.exports.create = (req, res, next) => {
                 user.dataValues.token = token;
                 // user.token = user.generateJWT();
                 // return res.json({ user: user.toAuthJSON() });
+
+                const meals = await Meal.count({
+                    where: {
+                        userId: user.id
+                    }
+                });
+
+                // const dishes = await User_Dish.count({
+                //     where: {
+                //         userId: user.id
+                //     }
+                // });
+
+                user.dataValues.meals = meals;
+                // user.dataValues.dishes = dishes;
+
                 return res.status(200).json({ user });
             } else {
                 return res.status(422).json({
