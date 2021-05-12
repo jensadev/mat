@@ -12,24 +12,24 @@ router.get('/menu', authByToken, DishesController.menu);
 router.get('/suggest', authByToken, DishesController.suggest);
 
 router.patch(
-  '/',
-  body('dish.id').isInt().withMessage('error.invalid'),
-  body('dish.name')
-    .not()
-    .isEmpty()
-    .isLength({ min: 4 })
-    .trim()
-    .escape()
-    .withMessage('dish.validation.name'),
-  authByToken,
-  DishesController.update
+    '/',
+    body('dish.id').isInt().withMessage('error.invalid'),
+    body('dish.name')
+        .not()
+        .isEmpty()
+        .isLength({ min: 4 })
+        .trim()
+        .escape()
+        .withMessage('dish.validation.name'),
+    authByToken,
+    DishesController.update
 );
 
 router.delete(
-  '/:id',
-  param('id').isInt().withMessage('error.invalid'),
-  authByToken,
-  DishesController.destroy
+    '/:id',
+    param('id').isInt().withMessage('error.invalid'),
+    authByToken,
+    DishesController.destroy
 );
 
 module.exports = router;

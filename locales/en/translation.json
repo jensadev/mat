@@ -1,42 +1,40 @@
 {
-  "user": {
-    "user": "user",
-    "missing": "missing",
-    "email": "email",
-    "password": "password",
-    "passwordConfirmation": "password confirmation",
-    "validation": {
-      "login": "Email or password",
-      "password": {
-        "strong": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
-        "confirmation": "Passwords do not match",
-        "required": "Required"
-      },
-      "email": {
+    "user": {
+        "user": "user",
+        "missing": "missing",
+        "email": "email",
+        "password": "password",
+        "passwordConfirmation": "password confirmation",
+        "validation": {
+            "login": "Email or password",
+            "password": {
+                "strong": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+                "confirmation": "Passwords do not match",
+                "required": "Required"
+            },
+            "email": {
+                "invalid": "Invalid value",
+                "taken": "Has already been taken"
+            }
+        }
+    },
+    "dish": {
+        "dish": "dish",
+        "validation": {
+            "name": "A dish consists of at least four letters"
+        }
+    },
+    "meal": {
+        "meal": "meal",
+        "validation": {}
+    },
+    "error": {
         "invalid": "Invalid value",
-        "taken": "Has already been taken"
-      }
-    }
-  },
-  "dish": {
-    "dish": "dish",
-    "validation": {
-      "name": "A dish consists of at least four letters"
-    }
-  },
-  "meal": {
-    "meal": "meal",
-    "validation": {
-      
-    }
-  },
-  "error": {
-    "invalid": "Invalid value",
-    "unspecific": "Something went wrong.",
-    "404": "The page was not found.",
-    "date": "Invalid date format",
-    "notfound": "Not found"
-  },
-  "belongsto": "Does not belong to {{owner}}",
-  "deleted": "{{what}} deleted"
+        "unspecific": "Something went wrong.",
+        "404": "The page was not found.",
+        "date": "Invalid date format",
+        "notfound": "Not found"
+    },
+    "belongsto": "Does not belong to {{owner}}",
+    "deleted": "{{what}} deleted"
 }

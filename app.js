@@ -19,21 +19,24 @@ const app = express();
 require('./config/passport');
 
 i18next
-  .use(Backend)
-  .use(middleware.LanguageDetector)
-  .init({
-    // debug: true,
-    // preload: ['en', 'se'],
-    backend: {
-      loadPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.json'),
-      addPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.missing.json')
-    },
-    fallbackLng: 'en',
-    // nonExplicitSupportedLngs: true,
-    // supportedLngs: ['en', 'de'],
-    load: 'languageOnly',
-    saveMissing: true
-  });
+    .use(Backend)
+    .use(middleware.LanguageDetector)
+    .init({
+        // debug: true,
+        // preload: ['en', 'se'],
+        backend: {
+            loadPath: path.join(__dirname, '/locales/{{lng}}/{{ns}}.json'),
+            addPath: path.join(
+                __dirname,
+                '/locales/{{lng}}/{{ns}}.missing.json'
+            )
+        },
+        fallbackLng: 'en',
+        // nonExplicitSupportedLngs: true,
+        // supportedLngs: ['en', 'de'],
+        load: 'languageOnly',
+        saveMissing: true
+    });
 app.use(middleware.handle(i18next));
 app.use(cors({ origin: process.env.APP_ORIGIN }));
 // app.use(helmet());
@@ -54,22 +57,22 @@ app.use('/api/dishes', dishesRouter);
 
 /// catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 app.use(function (err, req, res, next) {
-  console.log(err.stack);
+    console.log(err.stack);
 
-  res.status(err.status || 500);
+    res.status(err.status || 500);
 
-  res.json({
-    errors: {
-      message: err.message,
-      error: err
-    }
-  });
+    res.json({
+        errors: {
+            message: err.message,
+            error: err
+        }
+    });
 });
 
 // app.use(notFound);

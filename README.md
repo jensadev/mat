@@ -1,8 +1,10 @@
 # API for mat
+
 CORS enabled.
 There are migrations for sequlize.
 
 ## Auth Header
+
 ```
 headers: {
   'Content-Type': 'application/json',
@@ -11,8 +13,11 @@ headers: {
 ```
 
 # JSON returned
+
 ## Meals
+
 ### Users meals
+
 Paginated
 
 ```
@@ -60,7 +65,9 @@ Paginated
 ```
 
 ## Dishes
+
 ### Users dishes
+
 ```
 {
     "dishes": [
@@ -75,7 +82,9 @@ Paginated
     ]
 }
 ```
+
 ### Users most popular dishes
+
 ```
 {
     "dishes": [
@@ -94,15 +103,19 @@ Paginated
     ]
 }
 ```
+
 ### User, suggest a dish
+
 ```
 {
     "dish": {
         "name": "Falukorv och makaroner"
     }
 }
-``` 
+```
+
 ### User suggest a 7 day menu
+
 ```
 {
     "dishes": [
@@ -121,7 +134,9 @@ Paginated
 ```
 
 # Errors and Status Codes
+
 If a request fails any validations, expect a 422 and errors in the following format:
+
 ```
 {
   "errors":{
@@ -131,7 +146,9 @@ If a request fails any validations, expect a 422 and errors in the following for
   }
 }
 ```
+
 With fields:
+
 ```
 {
     "errors": {
@@ -177,11 +194,15 @@ With fields:
 Currently all needs auth.
 
 ## Users
+
 Register user
+
 ```
 POST /api/users
 ```
+
 Example request body:
+
 ```
 {
     "user": {
@@ -191,12 +212,15 @@ Example request body:
     }
 }
 ```
+
 Login user
+
 ```
 POST /api/login
 ```
 
 Example request body:
+
 ```
 {
     "user": {
@@ -206,30 +230,35 @@ Example request body:
 }
 ```
 
-## Resources 
+## Resources
 
 Get users meals, paginated:
+
 ```
 GET /api/meals
 GET /api/meals?page=1
 ```
 
 Get users dishes:
+
 ```
 GET /api/dishes
 ```
 
 Get users top dishes:
+
 ```
 GET /api/dishes/top
 ```
 
 Get one of users dishes:
+
 ```
 GET /api/dishes/suggest
 ```
 
 GET a suggested week menu:
+
 ```
 GET /api/dishes/menu
 ```
@@ -237,10 +266,13 @@ GET /api/dishes/menu
 ## Meals
 
 Create new meal:
+
 ```
 POST /api/meals
 ```
+
 Example request body:
+
 ```
 {
     "meal": {
@@ -250,11 +282,15 @@ Example request body:
     }
 }
 ```
+
 Update a meal:
+
 ```
 PATCH /api/meals
 ```
+
 Example request body:
+
 ```
 {
     "meal": {
@@ -265,7 +301,9 @@ Example request body:
     }
 }
 ```
+
 Delete a meal:
+
 ```
 DELETE /api/meals/:id
 ```
@@ -273,10 +311,13 @@ DELETE /api/meals/:id
 ## Dishes
 
 Update a dish:
+
 ```
 PATCH /api/dishes
 ```
+
 Example request body:
+
 ```
 {
     "dish": {
@@ -285,7 +326,9 @@ Example request body:
     }
 }
 ```
+
 Delete a dish:
+
 ```
 DELETE /api/dishes/:id
 ```
