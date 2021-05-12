@@ -177,7 +177,7 @@ module.exports.top = async (req, res) => {
         include: [
             {
                 model: Dish,
-                attributes: ['name']
+                attributes: ['id', 'name']
             }
         ],
         order: [[sequelize.literal('count'), 'DESC']],
