@@ -1,6 +1,7 @@
 const { User, Dish, Meal, User_Dish } = require('../models');
 const { validationResult } = require('express-validator');
 const sequelize = require('sequelize');
+const paginate = require('jw-paginate');
 
 module.exports.index = async (req, res) => {
     const user = await User.findByPk(req.user.id);
@@ -13,6 +14,7 @@ module.exports.index = async (req, res) => {
     }
 
     const getDishes = await User_Dish.findAll({
+        attributes: ['userId', 'dishId'],
         where: { userId: user.id },
         include: [
             {
@@ -23,10 +25,47 @@ module.exports.index = async (req, res) => {
     });
 
     const dishes = [];
-    if (getDishes)
+    if (getDishes) {
         for (let dish of getDishes) {
             dishes.push(dish.dataValues.Dish);
         }
+    }
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 7;
+    const maxPages = 5;
+    const pager = paginate(dishes.length, page, pageSize, maxPages);
+    const pageOfItems = dishes.slice(pager.startIndex, pager.endIndex + 1);
+
+    res.status(200).json({ pager, pageOfItems });
+};
+
+module.exports.all = async (req, res) => {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+        res.status(404).json({
+            errors: {
+                user: req.t('error.notfound')
+            }
+        });
+    }
+
+    const getDishes = await User_Dish.findAll({
+        attributes: ['userId', 'dishId'],
+        where: { userId: user.id },
+        include: [
+            {
+                model: Dish,
+                attributes: ['id', 'name']
+            }
+        ]
+    });
+
+    const dishes = [];
+    if (getDishes) {
+        for (let dish of getDishes) {
+            dishes.push(dish.dataValues.Dish);
+        }
+    }
     res.status(200).json({ dishes });
 };
 
@@ -152,11 +191,11 @@ module.exports.top = async (req, res) => {
         include: [
             {
                 model: Dish,
-                attributes: ['name']
+                attributes: ['id', 'name']
             }
         ],
         order: [[sequelize.literal('count'), 'DESC']],
-        limit: 10
+        limit: 7
     });
 
     const dishes = [];
@@ -165,6 +204,8 @@ module.exports.top = async (req, res) => {
             dishes.push(dish.dataValues);
         }
     }
+
+    console.table(dishes);
 
     res.status(200).json({ dishes });
 };
