@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     Meal.init(
         {
             date: DataTypes.DATE,
-            typeId: DataTypes.INTEGER
+            type: DataTypes.INTEGER
         },
         {
             sequelize,

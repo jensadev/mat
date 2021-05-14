@@ -22,7 +22,7 @@ module.exports = {
                     as: 'dishId'
                 }
             },
-            typeId: {
+            type: {
                 allowNull: false,
                 type: Sequelize.INTEGER
             },
