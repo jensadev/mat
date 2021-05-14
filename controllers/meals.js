@@ -25,12 +25,12 @@ module.exports.index = async (req, res) => {
     }
 
     const getMeals = await Meal.findAll({
-        attributes: ['id', 'date', 'typeId'],
+        attributes: ['id', 'date', 'type'],
         where: { userId: user.id },
         order: [
             // ['date', 'DESC'],
             [sequelize.fn('date', sequelize.col('date')), 'DESC'],
-            ['typeId', 'ASC']
+            ['type', 'ASC']
         ],
         include: [
             {
@@ -88,7 +88,7 @@ module.exports.store = async (req, res) => {
         date: req.body.meal.date,
         userId: user.id,
         dishId: dish.id,
-        typeId: req.body.meal.typeId
+        type: req.body.meal.type
     });
 
     res.status(201).json({ meal });
@@ -168,12 +168,12 @@ module.exports.update = async (req, res) => {
     });
 
     const date = req.body.meal.date ? req.body.meal.date : meal.date;
-    const typeId = parseInt(req.body.meal.typeId)
-        ? parseInt(req.body.meal.typeId)
-        : meal.typeId;
+    const type = parseInt(req.body.meal.type)
+        ? parseInt(req.body.meal.type)
+        : meal.type;
     const dishId = dish.id;
     const userId = user.id;
 
-    const updatedMeal = await meal.update({ date, typeId, dishId, userId });
+    const updatedMeal = await meal.update({ date, type, dishId, userId });
     res.status(200).json({ updatedMeal });
 };
