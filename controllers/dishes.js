@@ -31,7 +31,7 @@ module.exports.index = async (req, res) => {
         }
     }
     const page = parseInt(req.query.page) || 1;
-    const pageSize = 7;
+    const pageSize = 14;
     const maxPages = 5;
     const pager = paginate(dishes.length, page, pageSize, maxPages);
     const pageOfItems = dishes.slice(pager.startIndex, pager.endIndex + 1);
