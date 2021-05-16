@@ -31,8 +31,7 @@ module.exports.store = async (req, res) => {
 
     if (bodyData.user !== 'undefined' || bodyData.user.email !== 'undefined') {
         const existingUser = await User.findOne({
-            where: { email: req.body.user.email },
-            attributes: ['email']
+            where: { email: req.body.user.email }
         });
 
         if (existingUser) {
@@ -66,7 +65,7 @@ module.exports.store = async (req, res) => {
         delete user.dataValues.createdAt;
         delete user.dataValues.updatedAt;
         user.dataValues.token = await sign(user);
-        return res.status(201).json({ user });
+        res.status(201).json({ user });
     }
 };
 
@@ -104,22 +103,7 @@ module.exports.create = (req, res, next) => {
                 // user.token = user.generateJWT();
                 // return res.json({ user: user.toAuthJSON() });
 
-                const meals = await Meal.count({
-                    where: {
-                        userId: user.id
-                    }
-                });
-
-                // const dishes = await User_Dish.count({
-                //     where: {
-                //         userId: user.id
-                //     }
-                // });
-
-                user.dataValues.meals = meals;
-                // user.dataValues.dishes = dishes;
-
-                return res.status(200).json({ user });
+                res.status(200).json({ user });
             } else {
                 return res.status(422).json({
                     errors: {
@@ -133,22 +117,18 @@ module.exports.create = (req, res, next) => {
 };
 
 module.exports.index = async (req, res) => {
-    const user = await User.findByPk(req.user.id, {
-        attributes: {
-            exclude: ['password', 'createdAt', 'updatedAt']
-        }
-    });
+    const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
         });
     }
-    // delete user.dataValues.password;
-    // delete user.dataValues.createdAt;
-    // delete user.dataValues.updatedAt;
-    return res.status(200).json({ user });
+    delete user.dataValues.password;
+    delete user.dataValues.createdAt;
+    delete user.dataValues.updatedAt;
+    res.status(200).json({ user });
 };
 
 module.exports.show = async (req, res) => {
@@ -164,26 +144,26 @@ module.exports.show = async (req, res) => {
     }
 
     const user = await User.findOne({
-        where: { id: req.params.id, public: true },
-        attributes: ['handle', 'bio', 'family']
+        where: { id: req.params.id, public: true }
     });
-
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
         });
     }
-    // delete user.dataValues.email;
-    // delete user.dataValues.public;
-    // delete user.dataValues.password;
-    // delete user.dataValues.createdAt;
-    // delete user.dataValues.updatedAt;
-    return res.status(200).json({ user });
+    delete user.dataValues.email;
+    delete user.dataValues.public;
+    delete user.dataValues.family;
+    delete user.dataValues.password;
+    delete user.dataValues.createdAt;
+    delete user.dataValues.updatedAt;
+    res.status(200).json({ user });
 };
 
 module.exports.update = async (req, res) => {
+    console.table(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const extractedErrors = {};
@@ -195,22 +175,26 @@ module.exports.update = async (req, res) => {
         });
     }
 
-    const user = await User.findByPk(req.user.id, {
-        attributes: ['id', 'family', 'public', 'bio']
-    });
+    const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
         });
     }
 
-    // const email = req.body.user.email ? req.body.user.email : user.email;
-    const family = req.body.user.family && user.family ? false : true;
-    const public = req.body.user.public && user.public ? false : true;
-    const bio = req.body.user.bio ? req.body.user.bio : user.bio;
+    const email = req.body.user.email !== user.email && req.body.user.email;
+    const family = req.body.user.family && req.body.user.family;
+    const public = req.body.user.public && req.body.user.public;
+    const bio = req.body.user.bio !== user.bio && req.body.user.bio;
 
-    const updatedUser = await user.update({ family, public, bio });
-    return res.status(200).json({ updatedUser });
+    const updatedUser = await user.update({ family, public, bio, email });
+
+    // console.log(updatedUser);
+
+    delete updatedUser.dataValues.password;
+    delete updatedUser.dataValues.createdAt;
+    delete updatedUser.dataValues.updatedAt;
+    res.status(200).json({ updatedUser });
 };

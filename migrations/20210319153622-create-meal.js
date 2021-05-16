@@ -12,10 +12,6 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             },
-            type: {
-                allowNull: false,
-                type: Sequelize.INTEGER
-            },
             dishId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
@@ -25,6 +21,10 @@ module.exports = {
                     key: 'id',
                     as: 'dishId'
                 }
+            },
+            type: {
+                allowNull: false,
+                type: Sequelize.INTEGER
             },
             userId: {
                 allowNull: false,
@@ -45,9 +45,6 @@ module.exports = {
                 type: Sequelize.DATE
             }
         });
-        await queryInterface.addIndex('Meals', ['userId']);
-        await queryInterface.addIndex('Meals', ['userId', 'type']);
-        await queryInterface.addIndex('Meals', ['userId', 'date']);
     },
     down: async (queryInterface, Sequelize) => {
         await queryInterface.dropTable('Meals');

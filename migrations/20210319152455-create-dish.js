@@ -22,7 +22,6 @@ module.exports = {
                 type: Sequelize.DATE
             }
         });
-        return await queryInterface.addIndex('Dishes', ['name']);
     },
     down: async (queryInterface, Sequelize) => {
         await queryInterface.dropTable('Dishes');

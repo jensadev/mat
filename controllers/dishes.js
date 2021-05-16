@@ -1,13 +1,12 @@
 const { User, Dish, Meal, User_Dish } = require('../models');
 const { validationResult } = require('express-validator');
 const sequelize = require('sequelize');
+const paginate = require('jw-paginate');
 
 module.exports.index = async (req, res) => {
-    const user = await User.findByPk(req.user.id, {
-        attributes: ['id']
-    });
+    const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
@@ -15,9 +14,8 @@ module.exports.index = async (req, res) => {
     }
 
     const getDishes = await User_Dish.findAll({
-        attributes: [],
+        attributes: ['userId', 'dishId'],
         where: { userId: user.id },
-        order: [['updatedAt', 'DESC']],
         include: [
             {
                 model: Dish,
@@ -27,11 +25,48 @@ module.exports.index = async (req, res) => {
     });
 
     const dishes = [];
-    if (getDishes)
+    if (getDishes) {
         for (let dish of getDishes) {
             dishes.push(dish.dataValues.Dish);
         }
-    return res.status(200).json({ dishes });
+    }
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = 14;
+    const maxPages = 5;
+    const pager = paginate(dishes.length, page, pageSize, maxPages);
+    const pageOfItems = dishes.slice(pager.startIndex, pager.endIndex + 1);
+
+    res.status(200).json({ pager, pageOfItems });
+};
+
+module.exports.all = async (req, res) => {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+        res.status(404).json({
+            errors: {
+                user: req.t('error.notfound')
+            }
+        });
+    }
+
+    const getDishes = await User_Dish.findAll({
+        attributes: ['userId', 'dishId'],
+        where: { userId: user.id },
+        include: [
+            {
+                model: Dish,
+                attributes: ['id', 'name']
+            }
+        ]
+    });
+
+    const dishes = [];
+    if (getDishes) {
+        for (let dish of getDishes) {
+            dishes.push(dish.dataValues.Dish);
+        }
+    }
+    res.status(200).json({ dishes });
 };
 
 module.exports.destroy = async (req, res) => {
@@ -46,10 +81,7 @@ module.exports.destroy = async (req, res) => {
         });
     }
 
-    let dish = await Dish.findByPk(req.params.id, {
-        attributes: ['id']
-    });
-
+    let dish = await Dish.findByPk(req.params.id);
     if (!dish) {
         return res.status(404).json({
             errors: {
@@ -58,17 +90,7 @@ module.exports.destroy = async (req, res) => {
         });
     }
 
-    const user = await User.findByPk(req.user.id, {
-        attributes: ['id']
-    });
-
-    if (!user) {
-        return res.status(404).json({
-            errors: {
-                user: req.t('error.notfound')
-            }
-        });
-    }
+    const user = await User.findByPk(req.user.id);
 
     const userHasDish = await User_Dish.findOne({
         where: { userId: user.id, dishId: dish.id }
@@ -87,15 +109,19 @@ module.exports.destroy = async (req, res) => {
     });
 
     if (usersHasDish.length > 1) {
-        await userHasDish.destroy();
+        await User_Dish.destroy({
+            where: { dishId: dish.id, userId: user.id }
+        });
     } else {
         if (usersHasDish[0].dataValues.userId === user.id) {
-            await userHasDish.destroy();
-            await dish.destroy();
+            await User_Dish.destroy({
+                where: { dishId: dish.id, userId: user.id }
+            });
+            await Dish.destroy({ where: { id: dish.id } });
         }
     }
 
-    return res.status(200).json({
+    res.status(200).json({
         message: req.t('deleted', { what: req.t('dish.dish') })
     });
 };
@@ -115,16 +141,14 @@ module.exports.update = async (req, res) => {
     let dish = await Dish.findByPk(req.body.dish.id);
 
     if (!dish) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 dish: req.t('error.notfound')
             }
         });
     }
 
-    const user = await User.findByPk(req.user.id, {
-        attributes: ['id']
-    });
+    const user = await User.findByPk(req.user.id);
 
     const usersHasDish = await User_Dish.findAll({
         where: { dishId: dish.id }
@@ -140,22 +164,12 @@ module.exports.update = async (req, res) => {
         await User_Dish.destroy({
             where: { dishId: dish.id, userId: user.id }
         });
-
-        await Meal.findAll({
-            where: { dishId: dish.id, userId: user.id },
-            attributes: ['dishId']
-        }).success((instances) => {
-            instances.forEach((instance) => {
-                instance.updateAttributes({ dishId: newDish.id });
-            });
-        });
-
-        return res.status(200).json({ newDish });
+        res.status(200).json({ newDish });
     } else {
         if (usersHasDish[0].dataValues.userId === user.id) {
             const name = req.body.dish.name ? req.body.dish.name : dish.name;
             const updatedDish = await dish.update({ name });
-            return res.status(200).json({ updatedDish });
+            res.status(200).json({ updatedDish });
         }
     }
 };
@@ -163,7 +177,7 @@ module.exports.update = async (req, res) => {
 module.exports.top = async (req, res) => {
     const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
@@ -181,7 +195,7 @@ module.exports.top = async (req, res) => {
             }
         ],
         order: [[sequelize.literal('count'), 'DESC']],
-        limit: 10
+        limit: 7
     });
 
     const dishes = [];
@@ -191,13 +205,15 @@ module.exports.top = async (req, res) => {
         }
     }
 
-    return res.status(200).json({ dishes });
+    console.table(dishes);
+
+    res.status(200).json({ dishes });
 };
 
 module.exports.menu = async (req, res) => {
     const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }
@@ -231,7 +247,7 @@ module.exports.menu = async (req, res) => {
 module.exports.suggest = async (req, res) => {
     const user = await User.findByPk(req.user.id);
     if (!user) {
-        return res.status(404).json({
+        res.status(404).json({
             errors: {
                 user: req.t('error.notfound')
             }

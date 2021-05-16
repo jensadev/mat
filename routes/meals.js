@@ -24,7 +24,7 @@ router.post(
         .trim()
         .escape()
         .withMessage('dish.validation.name'),
-    body('meal.type').isInt({ gt: 0, lt: 4 }).withMessage('error.invalid'),
+    body('meal.type').isInt().withMessage('error.invalid'),
     body('meal.date').isISO8601().withMessage('error.date'),
     authByToken,
     MealsController.store
@@ -39,16 +39,9 @@ router.patch(
         .isLength({ min: 4 })
         .trim()
         .escape()
-        .withMessage('dish.validation.name')
-        .optional({ nullable: true }),
-    body('meal.type')
-        .isInt({ gt: 0, lt: 4 })
-        .withMessage('error.invalid')
-        .optional({ nullable: true }),
-    body('meal.date')
-        .isISO8601()
-        .withMessage('error.date')
-        .optional({ nullable: true }),
+        .withMessage('dish.validation.name'),
+    body('meal.type').isInt().withMessage('error.invalid'),
+    body('meal.date').isISO8601().withMessage('error.date'),
     authByToken,
     MealsController.update
 );

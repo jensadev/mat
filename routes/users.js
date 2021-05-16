@@ -16,6 +16,11 @@ router.patch(
         .isBoolean()
         .optional({ nullable: true })
         .withMessage('error.invalid'),
+    body('user.email')
+        .isEmail()
+        .normalizeEmail()
+        .optional({ nullable: true })
+        .withMessage('user.validation.email.invalid'),
     body('user.bio').trim().escape().optional({ nullable: true }),
     authByToken,
     UserController.update

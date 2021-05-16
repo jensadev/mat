@@ -1,12 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { body, param } = require('express-validator');
+const { body, param, query } = require('express-validator');
 const { authByToken } = require('../middleware/auth');
 
 const DishesController = require('../controllers/dishes');
 
-router.get('/', authByToken, DishesController.index);
+router.get(
+    '/',
+    query('page')
+        .isInt()
+        .optional({ nullable: true })
+        .withMessage('error.invalid'),
+    authByToken,
+    DishesController.index
+);
 
+router.get('/all', authByToken, DishesController.all);
 router.get('/top', authByToken, DishesController.top);
 router.get('/menu', authByToken, DishesController.menu);
 router.get('/suggest', authByToken, DishesController.suggest);
