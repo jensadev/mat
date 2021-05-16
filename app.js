@@ -6,7 +6,7 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
-// const helmet = require('helmet')
+const helmet = require('helmet');
 // const { notFound, errorHandler } = require('./middleware/errorHandler');
 const usersRouter = require('./routes/users');
 const mealsRouter = require('./routes/meals');
@@ -39,7 +39,7 @@ i18next
     });
 app.use(middleware.handle(i18next));
 app.use(cors({ origin: process.env.APP_ORIGIN }));
-// app.use(helmet());
+app.use(helmet());
 app.use(compression());
 app.use(logger('dev'));
 app.use(express.json());

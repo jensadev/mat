@@ -102,6 +102,7 @@ module.exports.create = (req, res, next) => {
                 user.dataValues.token = token;
                 // user.token = user.generateJWT();
                 // return res.json({ user: user.toAuthJSON() });
+
                 res.status(200).json({ user });
             } else {
                 return res.status(422).json({
@@ -162,6 +163,7 @@ module.exports.show = async (req, res) => {
 };
 
 module.exports.update = async (req, res) => {
+    console.table(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const extractedErrors = {};
@@ -182,13 +184,17 @@ module.exports.update = async (req, res) => {
         });
     }
 
-    // const email = req.body.user.email ? req.body.user.email : user.email;
-    const family = req.body.user.family && user.family ? false : true;
-    const public = req.body.user.public && user.public ? false : true;
-    const bio = req.body.user.bio ? req.body.user.bio : user.bio;
+    const email = req.body.user.email !== user.email && req.body.user.email;
+    const family = req.body.user.family && req.body.user.family;
+    const public = req.body.user.public && req.body.user.public;
+    const bio = req.body.user.bio !== user.bio && req.body.user.bio;
 
-    console.log(family);
+    const updatedUser = await user.update({ family, public, bio, email });
 
-    const updatedUser = await user.update({ family, public, bio });
+    // console.log(updatedUser);
+
+    delete updatedUser.dataValues.password;
+    delete updatedUser.dataValues.createdAt;
+    delete updatedUser.dataValues.updatedAt;
     res.status(200).json({ updatedUser });
 };
