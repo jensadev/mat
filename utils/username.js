@@ -7,7 +7,8 @@ function generateUserName() {
     return (
         capitalizeFirstLetter(adjektiv[adj]) +
         capitalizeFirstLetter(substantiv[sub]) +
-        clamp(adj + sub, 0, 5000)
+        getRandomInt(1, 1000)
+        // clamp(adj + sub, 1, 999)
     );
 }
 
