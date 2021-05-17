@@ -77,7 +77,7 @@ module.exports.store = async (req, res) => {
     }
 
     const [dish] = await Dish.findOrCreate({
-        where: { name: req.body.meal.dish }
+        where: { name: req.body.meal.dish.toLowerCase() }
     });
 
     await User_Dish.findOrCreate({
@@ -160,7 +160,7 @@ module.exports.update = async (req, res) => {
     }
 
     const [dish] = await Dish.findOrCreate({
-        where: { name: req.body.meal.dish }
+        where: { name: req.body.meal.dish.toLowerCase() }
     });
 
     await User_Dish.findOrCreate({

@@ -156,7 +156,7 @@ module.exports.update = async (req, res) => {
 
     if (usersHasDish.length > 1) {
         let newDish = await Dish.create({
-            name: req.body.dish.name
+            name: req.body.dish.name.toLowerCase()
         });
         await User_Dish.findOrCreate({
             where: { userId: user.id, dishId: newDish.id }
@@ -167,7 +167,7 @@ module.exports.update = async (req, res) => {
         res.status(200).json({ newDish });
     } else {
         if (usersHasDish[0].dataValues.userId === user.id) {
-            const name = req.body.dish.name ? req.body.dish.name : dish.name;
+            const name = req.body.dish.name ? req.body.dish.name.toLowerCase() : dish.name;
             const updatedDish = await dish.update({ name });
             res.status(200).json({ updatedDish });
         }

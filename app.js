@@ -55,6 +55,11 @@ app.use('/api/users', usersRouter);
 app.use('/api/meals', mealsRouter);
 app.use('/api/dishes', dishesRouter);
 
+// const { generateUserName } = require('./utils/username');
+// app.use('/', function(req, res ) {
+//     res.send(generateUserName());
+// })
+
 /// catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
