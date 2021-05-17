@@ -21,7 +21,11 @@ router.patch(
         .normalizeEmail()
         .optional({ nullable: true })
         .withMessage('user.validation.email.invalid'),
-    body('user.bio').trim().escape().optional({ nullable: true }),
+    body('user.bio')
+        .isLength({ min: 0, max: 255 })
+        .trim()
+        .escape()
+        .optional({ nullable: true }),
     authByToken,
     UserController.update
 );

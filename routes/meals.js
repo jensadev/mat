@@ -15,6 +15,20 @@ router.get(
     MealsController.index
 );
 
+router.get(
+    '/list',
+    query('size')
+        .isInt()
+        .optional({ nullable: true })
+        .withMessage('error.invalid'),
+    query('page')
+        .isInt()
+        .optional({ nullable: true })
+        .withMessage('error.invalid'),
+    authByToken,
+    MealsController.list
+);
+
 router.post(
     '/',
     body('meal.dish')
