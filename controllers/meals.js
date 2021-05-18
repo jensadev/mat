@@ -84,7 +84,8 @@ module.exports.list = async (req, res) => {
         where: { userId: user.id },
         order: [
             [sequelize.fn('date', sequelize.col('date')), 'DESC'],
-            ['type', 'ASC']
+            ['type', 'ASC'],
+            ['id', 'DESC']
         ],
         include: [
             {

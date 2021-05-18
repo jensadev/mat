@@ -52,6 +52,7 @@ module.exports.all = async (req, res) => {
     const getDishes = await User_Dish.findAll({
         attributes: ['userId', 'dishId'],
         where: { userId: user.id },
+        order: [['updatedAt', 'DESC']],
         include: [
             {
                 model: Dish,
@@ -167,7 +168,9 @@ module.exports.update = async (req, res) => {
         res.status(200).json({ newDish });
     } else {
         if (usersHasDish[0].dataValues.userId === user.id) {
-            const name = req.body.dish.name ? req.body.dish.name.toLowerCase() : dish.name;
+            const name = req.body.dish.name
+                ? req.body.dish.name.toLowerCase()
+                : dish.name;
             const updatedDish = await dish.update({ name });
             res.status(200).json({ updatedDish });
         }
@@ -195,7 +198,7 @@ module.exports.top = async (req, res) => {
             }
         ],
         order: [[sequelize.literal('count'), 'DESC']],
-        limit: 7
+        limit: 10
     });
 
     const dishes = [];
@@ -205,7 +208,7 @@ module.exports.top = async (req, res) => {
         }
     }
 
-    console.table(dishes);
+    // console.table(dishes);
 
     res.status(200).json({ dishes });
 };

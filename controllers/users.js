@@ -103,6 +103,12 @@ module.exports.create = (req, res, next) => {
                 // user.token = user.generateJWT();
                 // return res.json({ user: user.toAuthJSON() });
 
+                const meals = await Meal.count({
+                    where: { userId: user.dataValues.id }
+                });
+
+                user.dataValues.meals = meals;
+
                 res.status(200).json({ user });
             } else {
                 return res.status(422).json({
@@ -125,6 +131,13 @@ module.exports.index = async (req, res) => {
             }
         });
     }
+
+    const meals = await Meal.count({
+        where: { id: user.dataValues.id }
+    });
+
+    user.dataValues.meals = meals;
+
     delete user.dataValues.password;
     delete user.dataValues.createdAt;
     delete user.dataValues.updatedAt;
