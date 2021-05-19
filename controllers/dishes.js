@@ -1,9 +1,19 @@
 const { User, Dish, Meal, User_Dish } = require('../models');
 const { validationResult } = require('express-validator');
 const sequelize = require('sequelize');
-const paginate = require('jw-paginate');
+// const paginate = require('jw-paginate');
 
 module.exports.index = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const extractedErrors = {};
+        errors
+            .array()
+            .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
+        return res.status(422).json({
+            errors: extractedErrors
+        });
+    }
     const user = await User.findByPk(req.user.id);
     if (!user) {
         res.status(404).json({
@@ -13,15 +23,21 @@ module.exports.index = async (req, res) => {
         });
     }
 
+    const offset = parseInt(req.query.page) * parseInt(req.query.size);
+    const limit = parseInt(req.query.size);
+
     const getDishes = await User_Dish.findAll({
         attributes: ['userId', 'dishId'],
         where: { userId: user.id },
+        order: [['createdAt', 'DESC']],
         include: [
             {
                 model: Dish,
                 attributes: ['id', 'name']
             }
-        ]
+        ],
+        offset,
+        limit
     });
 
     const dishes = [];
@@ -30,13 +46,8 @@ module.exports.index = async (req, res) => {
             dishes.push(dish.dataValues.Dish);
         }
     }
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = 14;
-    const maxPages = 5;
-    const pager = paginate(dishes.length, page, pageSize, maxPages);
-    const pageOfItems = dishes.slice(pager.startIndex, pager.endIndex + 1);
 
-    res.status(200).json({ pager, pageOfItems });
+    res.status(200).json(dishes);
 };
 
 module.exports.all = async (req, res) => {
@@ -178,6 +189,16 @@ module.exports.update = async (req, res) => {
 };
 
 module.exports.top = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const extractedErrors = {};
+        errors
+            .array()
+            .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
+        return res.status(422).json({
+            errors: extractedErrors
+        });
+    }
     const user = await User.findByPk(req.user.id);
     if (!user) {
         res.status(404).json({
@@ -186,6 +207,8 @@ module.exports.top = async (req, res) => {
             }
         });
     }
+
+    const limit = parseInt(req.query.limit) || 10;
 
     const getDishes = await Meal.findAll({
         attributes: [[sequelize.fn('count', sequelize.col('dishId')), 'count']],
@@ -198,7 +221,7 @@ module.exports.top = async (req, res) => {
             }
         ],
         order: [[sequelize.literal('count'), 'DESC']],
-        limit: 10
+        limit
     });
 
     const dishes = [];

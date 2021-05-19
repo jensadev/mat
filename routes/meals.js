@@ -5,18 +5,18 @@ const { authByToken } = require('../middleware/auth');
 
 const MealsController = require('../controllers/meals');
 
-router.get(
-    '/',
-    query('page')
-        .isInt()
-        .optional({ nullable: true })
-        .withMessage('error.invalid'),
-    authByToken,
-    MealsController.index
-);
+// router.get(
+//     '/',
+//     query('page')
+//         .isInt()
+//         .optional({ nullable: true })
+//         .withMessage('error.invalid'),
+//     authByToken,
+//     MealsController.index
+// );
 
 router.get(
-    '/list',
+    '/',
     query('size')
         .isInt()
         .optional({ nullable: true })
@@ -26,7 +26,7 @@ router.get(
         .optional({ nullable: true })
         .withMessage('error.invalid'),
     authByToken,
-    MealsController.list
+    MealsController.index
 );
 
 router.post(

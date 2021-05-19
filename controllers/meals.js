@@ -1,61 +1,61 @@
 const { Meal, User, Dish, User_Dish } = require('../models/');
 const { validationResult } = require('express-validator');
-const paginate = require('jw-paginate');
+// const paginate = require('jw-paginate');
 const sequelize = require('sequelize');
 
+// module.exports.index = async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         const extractedErrors = {};
+//         errors
+//             .array()
+//             .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
+//         return res.status(422).json({
+//             errors: extractedErrors
+//         });
+//     }
+
+//     const user = await User.findByPk(req.user.id);
+//     if (!user) {
+//         res.status(404).json({
+//             errors: {
+//                 user: req.t('error.notfound')
+//             }
+//         });
+//     }
+
+//     const getMeals = await Meal.findAll({
+//         attributes: ['id', 'date', 'type'],
+//         where: { userId: user.id },
+//         order: [
+//             // ['date', 'DESC'],
+//             [sequelize.fn('date', sequelize.col('date')), 'DESC'],
+//             ['type', 'ASC']
+//         ],
+//         include: [
+//             {
+//                 model: Dish,
+//                 attributes: ['name']
+//             }
+//         ]
+//     });
+
+//     const meals = [];
+//     if (getMeals) {
+//         for (let meal of getMeals) {
+//             meals.push(meal.dataValues);
+//         }
+//     }
+//     const page = parseInt(req.query.page) || 1;
+//     const pageSize = 7;
+//     const maxPages = 5;
+//     const pager = paginate(meals.length, page, pageSize, maxPages);
+//     const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
+
+//     res.status(200).json({ pager, pageOfItems });
+// };
+
 module.exports.index = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const extractedErrors = {};
-        errors
-            .array()
-            .map((err) => (extractedErrors[err.param] = [req.t(err.msg)]));
-        return res.status(422).json({
-            errors: extractedErrors
-        });
-    }
-
-    const user = await User.findByPk(req.user.id);
-    if (!user) {
-        res.status(404).json({
-            errors: {
-                user: req.t('error.notfound')
-            }
-        });
-    }
-
-    const getMeals = await Meal.findAll({
-        attributes: ['id', 'date', 'type'],
-        where: { userId: user.id },
-        order: [
-            // ['date', 'DESC'],
-            [sequelize.fn('date', sequelize.col('date')), 'DESC'],
-            ['type', 'ASC']
-        ],
-        include: [
-            {
-                model: Dish,
-                attributes: ['name']
-            }
-        ]
-    });
-
-    const meals = [];
-    if (getMeals) {
-        for (let meal of getMeals) {
-            meals.push(meal.dataValues);
-        }
-    }
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = 7;
-    const maxPages = 5;
-    const pager = paginate(meals.length, page, pageSize, maxPages);
-    const pageOfItems = meals.slice(pager.startIndex, pager.endIndex + 1);
-
-    res.status(200).json({ pager, pageOfItems });
-};
-
-module.exports.list = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const extractedErrors = {};
