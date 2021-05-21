@@ -44,7 +44,12 @@ router.post(
         .normalizeEmail()
         .withMessage('user.validation.email.invalid'),
     body('user.password')
-        .isStrongPassword()
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1
+        })
         .withMessage('user.validation.password.strong'),
     body('user.passwordConfirmation').custom((value, { req }) => {
         if (value !== req.body.user.password) {

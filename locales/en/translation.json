@@ -8,7 +8,7 @@
         "validation": {
             "login": "Email or password",
             "password": {
-                "strong": "Password should be combination of one uppercase , one lower case, one special char, one digit and min 8 , max 20 char long",
+                "strong": "Password should be combination of one uppercase , one lower case, one digit and min 8 characters long",
                 "confirmation": "Passwords do not match",
                 "required": "Required"
             },
