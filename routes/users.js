@@ -48,7 +48,9 @@ router.post(
             minLength: 8,
             minLowercase: 1,
             minUppercase: 1,
-            minNumbers: 1
+            minNumbers: 1,
+            minSymbols: 0,
+            returnScore: false
         })
         .withMessage('user.validation.password.strong'),
     body('user.passwordConfirmation').custom((value, { req }) => {
