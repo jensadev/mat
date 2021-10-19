@@ -76,8 +76,8 @@ module.exports.index = async (req, res) => {
         });
     }
 
-    const offset = parseInt(req.query.page) * parseInt(req.query.size);
-    const limit = parseInt(req.query.size);
+    const offset = parseInt(req.query.page) * parseInt(req.query.size) || 0;
+    const limit = parseInt(req.query.size) || 7;
 
     const getMeals = await Meal.findAll({
         attributes: ['id', 'date', 'type'],
@@ -128,9 +128,13 @@ module.exports.store = async (req, res) => {
         });
     }
 
-    const [dish] = await Dish.findOrCreate({
+    let dish = await Dish.findOrCreate({
         where: { name: req.body.meal.dish.toLowerCase() }
     });
+
+    dish = !dish.id ? dish[0].dataValues : dish;
+
+    console.log(dish);
 
     await User_Dish.findOrCreate({
         where: { userId: user.id, dishId: dish.id }
