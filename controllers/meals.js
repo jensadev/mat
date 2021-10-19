@@ -26,7 +26,7 @@ const sequelize = require('sequelize');
 
 //     const getMeals = await Meal.findAll({
 //         attributes: ['id', 'date', 'type'],
-//         where: { userId: user.id },
+//         where: { UserId: user.id },
 //         order: [
 //             // ['date', 'DESC'],
 //             [sequelize.fn('date', sequelize.col('date')), 'DESC'],
@@ -81,7 +81,7 @@ module.exports.index = async (req, res) => {
 
     const getMeals = await Meal.findAll({
         attributes: ['id', 'date', 'type'],
-        where: { userId: user.id },
+        where: { UserId: user.id },
         order: [
             [sequelize.fn('date', sequelize.col('date')), 'DESC'],
             ['type', 'ASC'],
@@ -137,13 +137,13 @@ module.exports.store = async (req, res) => {
     console.log(dish);
 
     await User_Dish.findOrCreate({
-        where: { userId: user.id, dishId: dish.id }
+        where: { UserId: user.id, DishId: dish.id }
     });
 
     let meal = await Meal.create({
         date: req.body.meal.date,
-        userId: user.id,
-        dishId: dish.id,
+        UserId: user.id,
+        DishId: dish.id,
         type: req.body.meal.type
     });
 
@@ -172,7 +172,7 @@ module.exports.destroy = async (req, res) => {
     }
 
     const user = await User.findByPk(req.user.id);
-    if (user.id != meal.userId) {
+    if (user.id != meal.UserId) {
         res.status(403).json({
             errors: {
                 meal: req.t('belongsto', { owner: req.t('user.user') })
@@ -207,7 +207,7 @@ module.exports.update = async (req, res) => {
         });
     }
     const user = await User.findByPk(req.user.id);
-    if (user.id != meal.userId) {
+    if (user.id != meal.UserId) {
         res.status(403).json({
             errors: {
                 meal: req.t('belongsto', { owner: req.t('user.user') })
@@ -220,16 +220,16 @@ module.exports.update = async (req, res) => {
     });
 
     await User_Dish.findOrCreate({
-        where: { userId: user.id, dishId: dish.id }
+        where: { UserId: user.id, DishId: dish.id }
     });
 
     const date = req.body.meal.date ? req.body.meal.date : meal.date;
     const type = parseInt(req.body.meal.type)
         ? parseInt(req.body.meal.type)
         : meal.type;
-    const dishId = dish.id;
-    const userId = user.id;
+    const DishId = dish.id;
+    const UserId = user.id;
 
-    const updatedMeal = await meal.update({ date, type, dishId, userId });
+    const updatedMeal = await meal.update({ date, type, DishId, UserId });
     res.status(200).json({ updatedMeal });
 };
