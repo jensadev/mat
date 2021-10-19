@@ -12,28 +12,28 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             },
-            dishId: {
+            DishId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
                 onDelete: 'CASCADE',
                 references: {
                     model: 'Dishes',
                     key: 'id',
-                    as: 'dishId'
+                    as: 'DishId'
                 }
             },
             type: {
                 allowNull: false,
                 type: Sequelize.INTEGER
             },
-            userId: {
+            UserId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
                 onDelete: 'CASCADE',
                 references: {
                     model: 'Users',
                     key: 'id',
-                    as: 'userId'
+                    as: 'UserId'
                 }
             },
             createdAt: {

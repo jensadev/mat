@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             Dish.belongsToMany(models.User, { through: 'User_Dish' });
             Dish.hasMany(models.User_Dish);
             Dish.hasMany(models.Meal, {
-                foreignKey: 'dishId',
+                foreignKey: 'DishId',
                 onDelete: 'CASCADE'
             });
         }
