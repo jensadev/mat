@@ -23,12 +23,12 @@ module.exports.index = async (req, res) => {
         });
     }
 
-    const offset = parseInt(req.query.page) * parseInt(req.query.size);
-    const limit = parseInt(req.query.size);
+    const offset = parseInt(req.query.page) * parseInt(req.query.size) || 0;
+    const limit = parseInt(req.query.size) || 7;
 
     const getDishes = await User_Dish.findAll({
-        attributes: ['userId', 'dishId'],
-        where: { userId: user.id },
+        attributes: ['UserId', 'DishId'],
+        where: { UserId: user.id },
         order: [['createdAt', 'DESC']],
         include: [
             {
@@ -61,8 +61,8 @@ module.exports.all = async (req, res) => {
     }
 
     const getDishes = await User_Dish.findAll({
-        attributes: ['userId', 'dishId'],
-        where: { userId: user.id },
+        attributes: ['UserId', 'DishId'],
+        where: { UserId: user.id },
         order: [['updatedAt', 'DESC']],
         include: [
             {
@@ -105,7 +105,7 @@ module.exports.destroy = async (req, res) => {
     const user = await User.findByPk(req.user.id);
 
     const userHasDish = await User_Dish.findOne({
-        where: { userId: user.id, dishId: dish.id }
+        where: { UserId: user.id, DishId: dish.id }
     });
 
     if (!userHasDish) {
@@ -117,17 +117,17 @@ module.exports.destroy = async (req, res) => {
     }
 
     const usersHasDish = await User_Dish.findAll({
-        where: { dishId: dish.id }
+        where: { DishId: dish.id }
     });
 
     if (usersHasDish.length > 1) {
         await User_Dish.destroy({
-            where: { dishId: dish.id, userId: user.id }
+            where: { DishId: dish.id, UserId: user.id }
         });
     } else {
-        if (usersHasDish[0].dataValues.userId === user.id) {
+        if (usersHasDish[0].dataValues.UserId === user.id) {
             await User_Dish.destroy({
-                where: { dishId: dish.id, userId: user.id }
+                where: { DishId: dish.id, UserId: user.id }
             });
             await Dish.destroy({ where: { id: dish.id } });
         }
@@ -163,7 +163,7 @@ module.exports.update = async (req, res) => {
     const user = await User.findByPk(req.user.id);
 
     const usersHasDish = await User_Dish.findAll({
-        where: { dishId: dish.id }
+        where: { DishId: dish.id }
     });
 
     if (usersHasDish.length > 1) {
@@ -171,14 +171,14 @@ module.exports.update = async (req, res) => {
             name: req.body.dish.name.toLowerCase()
         });
         await User_Dish.findOrCreate({
-            where: { userId: user.id, dishId: newDish.id }
+            where: { UserId: user.id, DishId: newDish.id }
         });
         await User_Dish.destroy({
-            where: { dishId: dish.id, userId: user.id }
+            where: { DishId: dish.id, UserId: user.id }
         });
         res.status(200).json({ newDish });
     } else {
-        if (usersHasDish[0].dataValues.userId === user.id) {
+        if (usersHasDish[0].dataValues.UserId === user.id) {
             const name = req.body.dish.name
                 ? req.body.dish.name.toLowerCase()
                 : dish.name;
@@ -211,9 +211,9 @@ module.exports.top = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
 
     const getDishes = await Meal.findAll({
-        attributes: [[sequelize.fn('count', sequelize.col('dishId')), 'count']],
-        group: ['dishId'],
-        where: { userId: user.id },
+        attributes: [[sequelize.fn('count', sequelize.col('DishId')), 'count']],
+        group: ['Dish.id'],
+        where: { UserId: user.id },
         include: [
             {
                 model: Dish,
@@ -248,15 +248,21 @@ module.exports.menu = async (req, res) => {
 
     const getDishes = await User_Dish.findAll({
         attributes: [],
-        where: { userId: user.id },
+        where: { UserId: user.id },
         include: [
             {
                 model: Dish,
                 attributes: ['name']
             }
         ],
-        order: [[sequelize.literal('rand()'), 'DESC']],
-        // order: [sequelize.fn('rand'), 'dishId'],
+        order: [
+            [
+                process.env.DB_DIALECT == 'postgres'
+                    ? sequelize.literal('random()')
+                    : sequelize.literal('rand()'),
+                'DESC'
+            ]
+        ],
         limit: 7
     });
 
@@ -282,16 +288,21 @@ module.exports.suggest = async (req, res) => {
 
     const getDish = await User_Dish.findOne({
         attributes: [],
-        where: { userId: user.id },
+        where: { UserId: user.id },
         include: [
             {
                 model: Dish,
                 attributes: ['name']
             }
         ],
-        order: [[sequelize.literal('rand()'), 'DESC']],
-        // order: [sequelize.fn('rand'), 'dishId'],
-        limit: 7
+        order: [
+            [
+                process.env.DB_DIALECT == 'postgres'
+                    ? sequelize.literal('random()')
+                    : sequelize.literal('rand()'),
+                'DESC'
+            ]
+        ]
     });
 
     const dish = getDish.dataValues.Dish;

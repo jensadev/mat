@@ -8,24 +8,24 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            userId: {
+            UserId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
                 onDelete: 'CASCADE',
                 references: {
                     model: 'Users',
                     key: 'id',
-                    as: 'userId'
+                    as: 'UserId'
                 }
             },
-            dishId: {
+            DishId: {
                 allowNull: false,
                 type: Sequelize.INTEGER,
                 onDelete: 'CASCADE',
                 references: {
                     model: 'Dishes',
                     key: 'id',
-                    as: 'dishId'
+                    as: 'DishId'
                 }
             },
             createdAt: {

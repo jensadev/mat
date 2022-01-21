@@ -104,7 +104,7 @@ module.exports.create = (req, res, next) => {
                 // return res.json({ user: user.toAuthJSON() });
 
                 const meals = await Meal.count({
-                    where: { userId: user.dataValues.id }
+                    where: { UserId: user.dataValues.id }
                 });
 
                 user.dataValues.meals = meals;

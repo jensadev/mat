@@ -5,15 +5,15 @@ module.exports = {
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
         host: process.env.DB_HOST,
-        dialect: 'mysql'
+        dialect: process.env.DB_DIALECT
     },
     production: {
-        use_env_variable: 'DATABASE_URL'
-        // "dialectOptions": {
-        //     "ssl": {
-        //       "require": false
-        //         // "rejectUnauthorized": false
-        //     }
-        // }
+        use_env_variable: 'HEROKU_POSTGRESQL_PINK_URL',
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        }
     }
 };
