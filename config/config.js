@@ -8,12 +8,12 @@ module.exports = {
         dialect: process.env.DB_DIALECT
     },
     production: {
-        use_env_variable: 'DATABASE_URL'
-        // "dialectOptions": {
-        //     "ssl": {
-        //       "require": false
-        //         // "rejectUnauthorized": false
-        //     }
-        // }
+        use_env_variable: 'HEROKU_POSTGRESQL_PINK_URL',
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        }
     }
 };
